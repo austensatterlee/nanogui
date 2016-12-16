@@ -17,13 +17,16 @@
 NAMESPACE_BEGIN(nanogui)
 
 Label::Label(Widget *parent, const std::string &caption, const std::string &font, int fontSize)
-    : Widget(parent), mCaption(caption), mFont(font) {
-    if (mTheme) {
-        mFontSize = mTheme->mStandardFontSize;
-        mColor = mTheme->mTextColor;
-    }
-    if (fontSize >= 0) mFontSize = fontSize;
-}
+		: Widget(parent), mCaption(caption), mFont(font), mAlign(Alignment::Left)
+	{
+		if (mTheme)
+		{
+			mFontSize = mTheme->mStandardFontSize;
+			mColor = mTheme->mTextColor;
+		}
+		if (fontSize >= 0)
+			mFontSize = fontSize;
+	}
 
 void Label::setTheme(Theme *theme) {
     Widget::setTheme(theme);
@@ -57,12 +60,28 @@ void Label::draw(NVGcontext *ctx) {
     nvgFontFace(ctx, mFont.c_str());
     nvgFontSize(ctx, fontSize());
     nvgFillColor(ctx, mColor);
+	int xpos;
+	switch (mAlign)
+	{
+		case Alignment::Left:
+			xpos = mPos.x();
+			break;
+		case Alignment::Center:
+			xpos = mPos.x() + mSize.x() * 0.5;
+			break;
+		case Alignment::Right:
+			xpos = mPos.x() + mSize.x();
+			break;
+		default:
+			xpos = mPos.x();
+			break;
+	}
     if (mFixedSize.x() > 0) {
-        nvgTextAlign(ctx, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
-        nvgTextBox(ctx, mPos.x(), mPos.y(), mFixedSize.x(), mCaption.c_str(), nullptr);
+        nvgTextAlign(ctx, (int)mAlign | NVG_ALIGN_TOP);
+        nvgTextBox(ctx, xpos, mPos.y(), mFixedSize.x(), mCaption.c_str(), nullptr);
     } else {
-        nvgTextAlign(ctx, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
-        nvgText(ctx, mPos.x(), mPos.y() + mSize.y() * 0.5f, mCaption.c_str(), nullptr);
+        nvgTextAlign(ctx, (int)mAlign | NVG_ALIGN_MIDDLE);
+        nvgText(ctx, xpos, mPos.y() + mSize.y() * 0.5f, mCaption.c_str(), nullptr);
     }
 }
 
