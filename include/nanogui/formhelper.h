@@ -124,8 +124,8 @@ public:
     /// Create a helper class to construct NanoGUI widgets on the given screen
     FormHelper(Screen *screen) : mScreen(screen) { }
 
-    /// Add a new top-level window
-    Window *addWindow(const Vector2i &pos,
+    /// Construct a new top-level window
+    Window *makeWindow(const Vector2i &pos,
                          const std::string &title = "Untitled") {
         assert(mScreen);
         mWidget = new Window(mScreen, title);
@@ -138,19 +138,20 @@ public:
         return static_cast<Window*>(mWidget.get());
     }
 
-    /// Add a new arbitrary-level window
-    Window *addWindow(const std::string &title = "Untitled") {
-        mWidget = new Window(nullptr, title);
-        mLayout = new AdvancedGridLayout({10, 0, 10, 0}, {});
-        mLayout->setMargin(10);
-        mLayout->setColStretch(2, 1);
-        mWidget->setLayout(mLayout);
-        mWidget->setVisible(true);
-        return static_cast<Window*>(mWidget.get());
-    }
+    /// Construct a new widget. The parent widget must be a window or a descendant of a window.
+    Widget *makeWidget(Widget *parent)
+    {
+        // Check that the parent widget is a window or a descendant of a window.
+        Widget *window_parent = parent;
+        bool found_window = false;
+        while(!found_window && window_parent->parent())
+        {
+            if(dynamic_cast<Window*>(window_parent))
+                found_window = true;
+            window_parent->parent();
+        }
+        if(!found_window) throw "Parent widget must be a window or a descendant of a window.";
 
-    /// Create a new form widget
-    Widget *addWidget(Widget* parent) {
         mWidget = new Widget(parent);
         mLayout = new AdvancedGridLayout({10, 0, 10, 0}, {});
         mLayout->setMargin(10);
@@ -240,13 +241,12 @@ public:
 
     /// Access the currently active \ref Window instance
     Widget *widget() { return mWidget; }
-
-    void setWidget(Widget *window) {
-        mWidget = window;
-        mLayout = dynamic_cast<AdvancedGridLayout *>(window->layout());
+    void setWidget(Widget* widget) {
+        mWidget = widget;
+        mLayout = dynamic_cast<AdvancedGridLayout *>(widget->layout());
         if (mLayout == nullptr)
             throw std::runtime_error(
-                "Internal error: window has an incompatible layout!");
+                "Internal error: widget has an incompatible layout!");
     }
 
     /// Specify a fixed size for newly added widgets

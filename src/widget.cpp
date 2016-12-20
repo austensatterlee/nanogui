@@ -152,14 +152,24 @@ void Widget::addChild(Widget * widget) {
 }
 
 void Widget::removeChild(const Widget *widget) {
+    // Clear focus path if necessary
+    Widget *screen = this;
+    while (screen->parent())
+        screen = screen->parent();
+    std::vector<Widget *>& focusPath = ((Screen *) screen)->mFocusPath;
+    Widget *&dragWidget = ((Screen *) screen)->mDragWidget;
+    if (std::find(focusPath.begin(), focusPath.end(), widget) != focusPath.end())
+        focusPath.clear();
+    if (dragWidget==widget)
+        dragWidget=nullptr;
+
     mChildren.erase(std::remove(mChildren.begin(), mChildren.end(), widget), mChildren.end());
     widget->decRef();
 }
 
 void Widget::removeChild(int index) {
     Widget *widget = mChildren[index];
-    mChildren.erase(mChildren.begin() + index);
-    widget->decRef();
+    removeChild(widget);
 }
 
 int Widget::childIndex(Widget *widget) const {
