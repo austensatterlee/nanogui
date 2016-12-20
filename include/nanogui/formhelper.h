@@ -148,7 +148,7 @@ public:
         {
             if(dynamic_cast<Window*>(window_parent))
                 found_window = true;
-            window_parent->parent();
+            window_parent = window_parent->parent();
         }
         if(!found_window) throw "Parent widget must be a window or a descendant of a window.";
 
