@@ -25,7 +25,7 @@ NAMESPACE_BEGIN(nanogui)
  */
 class NANOGUI_EXPORT ColorPicker : public PopupButton {
 public:
-    ColorPicker(Widget *parent, const Color& color = Color(1.0f, 0.0f, 0.0f, 1.0f));
+    ColorPicker(Widget *parent, const Color& color = Color(1.0f, 0.0f, 0.0f, 1.0f), bool requireButtonClick=true);
 
     /// Set the change callback
     std::function<void(const Color &)> callback() const                  { return mCallback; }
@@ -37,8 +37,11 @@ public:
     void setColor(const Color& color);
 protected:
     std::function<void(const Color &)> mCallback;
+    Slider *mAlphaSlider;
     ColorWheel *mColorWheel;
+    TextBox *mColorText;
     Button *mPickButton;
+    bool mRequireButtonClick;
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };

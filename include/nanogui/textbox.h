@@ -168,6 +168,7 @@ public:
         );
     }
 
+    Scalar getValueIncrement() const { return mValueIncrement; }
     void setValueIncrement(Scalar incr) {
         mValueIncrement = incr;
     }
@@ -279,7 +280,8 @@ public:
             return true;
         });
     }
-
+    
+    Scalar getValueIncrement() const { return mValueIncrement; }
     void setValueIncrement(Scalar incr) {
         mValueIncrement = incr;
     }
