@@ -19,7 +19,8 @@ NAMESPACE_BEGIN(nanogui)
 
 PopupButton::PopupButton(Widget *parent, const std::string &caption, int buttonIcon)
     : Button(parent, caption, buttonIcon),
-      mChevronIcon(ENTYPO_ICON_CHEVRON_SMALL_RIGHT) {
+      mChevronIcon(ENTYPO_ICON_CHEVRON_SMALL_RIGHT),
+      mDisposable(false) {
 
     setFlags(Flags::ToggleButton | Flags::PopupButton);
 
@@ -34,7 +35,7 @@ Vector2i PopupButton::preferredSize(NVGcontext *ctx) const {
 }
 
 void PopupButton::draw(NVGcontext* ctx) {
-    if (!mEnabled && mPushed)
+    if ((!mEnabled || (mDisposable && !mFocused)) && mPushed)
         mPushed = false;
 
     mPopup->setVisible(mPushed);

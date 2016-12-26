@@ -23,7 +23,7 @@ NAMESPACE_BEGIN(nanogui)
 ColorPicker::ColorPicker(Widget *parent, const Color& color, bool requireButtonClick) : PopupButton(parent, ""), mRequireButtonClick(requireButtonClick) {
     setBackgroundColor(color);
     Popup *popup = this->popup();
-    popup->setLayout(new BoxLayout(Orientation::Vertical, Alignment::Fill, 5, 5));
+    popup->setLayout(new BoxLayout(Orientation::Vertical, Alignment::Middle, 5, 5));
 
     mAlphaSlider = new Slider(popup);
     mAlphaSlider->setRange({ 0.0f,1.0f });

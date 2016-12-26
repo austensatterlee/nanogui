@@ -31,6 +31,10 @@ public:
     void setChevronIcon(int icon) { mChevronIcon = icon; }
     int chevronIcon() const { return mChevronIcon; }
 
+    /// When true, the popup disappears after the next interaction.
+    void setDisposable(bool transient){ mDisposable = transient; }
+    bool disposable() const { return mDisposable; }    
+
     void setSide(Popup::Side popupSide);
     Popup::Side side() const { return mPopup->side(); }
 
@@ -46,6 +50,7 @@ public:
 protected:
     Popup *mPopup;
     int mChevronIcon;
+    bool mDisposable;
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };

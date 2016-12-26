@@ -512,7 +512,7 @@ bool TextBox::checkFormat(const std::string &input, const std::string &format) {
 
 bool TextBox::copySelection() {
     if (mSelectionPos > -1) {
-        Screen *sc = dynamic_cast<Screen *>(this->window()->parent());
+        Screen *sc = this->screen();
 
         int begin = mCursorPos;
         int end = mSelectionPos;
@@ -529,7 +529,7 @@ bool TextBox::copySelection() {
 }
 
 void TextBox::pasteFromClipboard() {
-    Screen *sc = dynamic_cast<Screen *>(this->window()->parent());
+    Screen *sc = this->screen();
     const char* cbstr = glfwGetClipboardString(sc->glfwWindow());
     if (cbstr)
         mValueTemp.insert(mCursorPos, std::string(cbstr));

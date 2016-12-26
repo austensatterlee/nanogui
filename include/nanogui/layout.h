@@ -298,8 +298,14 @@ public:
     /// Set the stretch factor of a given row
     void setRowStretch(int index, float stretch) { mRowStretch.at(index) = stretch; }
 
+    /// Set the size of a given row
+    void setRowSize(int index, int size){ mRows[index] = size; }
+
     /// Set the stretch factor of a given column
     void setColStretch(int index, float stretch) { mColStretch.at(index) = stretch; }
+
+    /// Set the size of a given row
+    void setColSize(int index, int size){ mCols[index] = size; }
 
     /// Specify the anchor data structure for a given widget
     void setAnchor(const Widget *widget, const Anchor &anchor) { mAnchor[widget] = anchor; }

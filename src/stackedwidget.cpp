@@ -24,7 +24,8 @@ void StackedWidget::setSelectedIndex(int index) {
     if (mSelectedIndex >= 0)
         mChildren[mSelectedIndex]->setVisible(false);
     mSelectedIndex = index;
-    mChildren[mSelectedIndex]->setVisible(true);
+    if (mSelectedIndex >= 0)
+        mChildren[mSelectedIndex]->setVisible(true);
 }
 
 int StackedWidget::selectedIndex() const {

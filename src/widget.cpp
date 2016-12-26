@@ -80,13 +80,16 @@ Widget *Widget::findWidget(const Vector2i &p) {
 }
 
 bool Widget::mouseButtonEvent(const Vector2i &p, int button, bool down, int modifiers) {
-    for (auto it = mChildren.rbegin(); it != mChildren.rend(); ++it) {
+    for(Widget * w : mChildren)
+        w->incRef();
+    std::vector<Widget*> children(mChildren);
+    for (auto it = children.rbegin(); it != children.rend(); ++it) {
         Widget *child = *it;
         if (child->visible() && child->contains(p - mPos) &&
             child->mouseButtonEvent(p - mPos, button, down, modifiers))
             return true;
     }
-    if (button == GLFW_MOUSE_BUTTON_1 && down && !mFocused)
+    if (button == GLFW_MOUSE_BUTTON_1 && down)
         requestFocus();
     return false;
 }
@@ -188,6 +191,21 @@ Window *Widget::window() {
         Window *window = dynamic_cast<Window *>(widget);
         if (window)
             return window;
+        widget = widget->parent();
+    }
+}
+
+Screen *Widget::screen()
+{
+    Widget *widget = this;
+    while (true)
+    {
+        if (!widget)
+            throw std::runtime_error(
+                "Widget:internal error (could not find parent screen)");
+        Screen *screen = dynamic_cast<Screen *>(widget);
+        if (screen)
+            return screen;
         widget = widget->parent();
     }
 }

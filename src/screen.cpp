@@ -626,19 +626,27 @@ bool Screen::resizeCallbackEvent(int, int) {
 }
 
 void Screen::updateFocus(Widget *widget) {
-    for (auto w: mFocusPath) {
-        if (!w->focused())
-            continue;
-        w->focusEvent(false);
-    }
-    mFocusPath.clear();
+    // Construct new focus path
+    std::vector<Widget*> newFocusPath;
     Widget *window = nullptr;
     while (widget) {
-        mFocusPath.push_back(widget);
+        newFocusPath.push_back(widget);
         if (dynamic_cast<Window *>(widget))
             window = widget;
         widget = widget->parent();
     }
+
+    for (auto w: mFocusPath) {
+        if (!w->focused())
+            continue;
+        // Don't send a de-focus event to widget's that are also in the new focus path.
+        if (std::find(newFocusPath.begin(), newFocusPath.end(), w)!=newFocusPath.end())
+            continue;
+        w->focusEvent(false);
+    }
+
+    mFocusPath.clear();
+    mFocusPath = newFocusPath;
     for (auto it = mFocusPath.rbegin(); it != mFocusPath.rend(); ++it)
         (*it)->focusEvent(true);
 
