@@ -80,17 +80,22 @@ Widget *Widget::findWidget(const Vector2i &p) {
 }
 
 bool Widget::mouseButtonEvent(const Vector2i &p, int button, bool down, int modifiers) {
-    for(Widget * w : mChildren)
-        w->incRef();
     std::vector<Widget*> children(mChildren);
+	for (Widget * w : children)
+		w->incRef();
     for (auto it = children.rbegin(); it != children.rend(); ++it) {
         Widget *child = *it;
-        if (child->visible() && child->contains(p - mPos) &&
-            child->mouseButtonEvent(p - mPos, button, down, modifiers))
-            return true;
+		if (child->visible() && child->contains(p - mPos) &&
+			child->mouseButtonEvent(p - mPos, button, down, modifiers)) {
+			for (Widget * w : children)
+				w->decRef();
+			return true;
+		}
     }
     if (button == GLFW_MOUSE_BUTTON_1 && down)
         requestFocus();
+	for (Widget * w : children)
+		w->decRef();
     return false;
 }
 
