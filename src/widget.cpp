@@ -80,14 +80,22 @@ Widget *Widget::findWidget(const Vector2i &p) {
 }
 
 bool Widget::mouseButtonEvent(const Vector2i &p, int button, bool down, int modifiers) {
-    for (auto it = mChildren.rbegin(); it != mChildren.rend(); ++it) {
+    std::vector<Widget*> children(mChildren);
+    for (Widget * w : children)
+        w->incRef();
+    for (auto it = children.rbegin(); it != children.rend(); ++it) {
         Widget *child = *it;
         if (child->visible() && child->contains(p - mPos) &&
-            child->mouseButtonEvent(p - mPos, button, down, modifiers))
+            child->mouseButtonEvent(p - mPos, button, down, modifiers)) {
+            for (Widget * w : children)
+                w->decRef();
             return true;
+        }
     }
     if (button == GLFW_MOUSE_BUTTON_1 && down && !mFocused)
         requestFocus();
+    for (Widget * w : children)
+        w->decRef();
     return false;
 }
 
@@ -152,14 +160,21 @@ void Widget::addChild(Widget * widget) {
 }
 
 void Widget::removeChild(const Widget *widget) {
+    // Clear focus path if necessary
+    Screen *sc = screen();
+    Widget *&dragWidget = sc->mDragWidget;
+    if (dragWidget==widget)
+        dragWidget=nullptr;
+    if (widget->focused())
+        sc->updateFocus(nullptr);
+
     mChildren.erase(std::remove(mChildren.begin(), mChildren.end(), widget), mChildren.end());
     widget->decRef();
 }
 
 void Widget::removeChild(int index) {
     Widget *widget = mChildren[index];
-    mChildren.erase(mChildren.begin() + index);
-    widget->decRef();
+    removeChild(widget);
 }
 
 int Widget::childIndex(Widget *widget) const {
@@ -178,6 +193,21 @@ Window *Widget::window() {
         Window *window = dynamic_cast<Window *>(widget);
         if (window)
             return window;
+        widget = widget->parent();
+    }
+}
+
+Screen *Widget::screen()
+{
+    Widget *widget = this;
+    while (true)
+    {
+        if (!widget)
+            throw std::runtime_error(
+                "Widget:internal error (could not find parent screen)");
+        Screen *screen = dynamic_cast<Screen *>(widget);
+        if (screen)
+            return screen;
         widget = widget->parent();
     }
 }
