@@ -36,6 +36,9 @@ public:
     /// Set whether or not this is a modal dialog
     void setModal(bool modal) { mModal = modal; }
 
+    bool isBackgroundWindow() const { return mIsBackgroundWindow; }
+    void setIsBackgroundWindow(bool a_isBackgroundWindow) { mIsBackgroundWindow = a_isBackgroundWindow; }
+
     /// Return the panel used to house window buttons
     Widget *buttonPanel();
 
@@ -67,6 +70,7 @@ protected:
     Widget *mButtonPanel;
     bool mModal;
     bool mDrag;
+    bool mIsBackgroundWindow;
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };

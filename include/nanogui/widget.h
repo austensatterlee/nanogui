@@ -175,12 +175,20 @@ public:
     /// Set whether or not this widget is currently enabled
     void setEnabled(bool enabled) { mEnabled = enabled; }
 
+    /// Return whether or not this widget needs to capture mouse drag events
+    bool draggable() const { return mDraggable; }
+    /// Set wheter or not this widget needs to capture mouse drag events
+    void setDraggable(bool draggable) { mDraggable = draggable; }
+
     /// Return whether or not this widget is currently focused
     bool focused() const { return mFocused; }
     /// Set whether or not this widget is currently focused
     void setFocused(bool focused) { mFocused = focused; }
     /// Request the focus to be moved to this widget
     void requestFocus();
+
+    /// Return wheter or not this widget has mouse focus
+    bool mouseFocus() const { return mMouseFocus; }
 
     const std::string &tooltip() const { return mTooltip; }
     void setTooltip(const std::string &tooltip) { mTooltip = tooltip; }
@@ -205,6 +213,9 @@ public:
 
     /// Determine the widget located at the given position value (recursive)
     Widget *findWidget(const Vector2i &p);
+
+    /// Determine the widget located at the given position value that matches the given filter function
+    Widget *findWidget(const Vector2i &p, std::function<bool(const Widget*)> filter);
 
     /// Handle a mouse button event (default implementation: propagate to children)
     virtual bool mouseButtonEvent(const Vector2i &p, int button, bool down, int modifiers);
@@ -256,7 +267,7 @@ protected:
     std::string mId;
     Vector2i mPos, mSize, mFixedSize;
     std::vector<Widget *> mChildren;
-    bool mVisible, mEnabled;
+    bool mVisible, mEnabled, mDraggable;
     bool mFocused, mMouseFocus;
     std::string mTooltip;
     int mFontSize;

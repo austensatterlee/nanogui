@@ -22,7 +22,7 @@ NAMESPACE_BEGIN(nanogui)
 Widget::Widget(Widget *parent)
     : mParent(nullptr), mTheme(nullptr), mLayout(nullptr),
       mPos(Vector2i::Zero()), mSize(Vector2i::Zero()),
-      mFixedSize(Vector2i::Zero()), mVisible(true), mEnabled(true),
+      mFixedSize(Vector2i::Zero()), mVisible(true), mEnabled(true), mDraggable(true),
       mFocused(false), mMouseFocus(false), mTooltip(""), mFontSize(-1.0f),
       mCursor(Cursor::Arrow) {
     if (parent)
@@ -73,8 +73,17 @@ void Widget::performLayout(NVGcontext *ctx) {
 Widget *Widget::findWidget(const Vector2i &p) {
     for (auto it = mChildren.rbegin(); it != mChildren.rend(); ++it) {
         Widget *child = *it;
-        if (child->visible() && child->enabled() && child->contains(p - mPos))
+        if (child->visible() && child->contains(p - mPos))
             return child->findWidget(p - mPos);
+    }
+    return contains(p) ? this : nullptr;
+}
+
+Widget* Widget::findWidget(const Vector2i& p, std::function<bool(const Widget*)> filter){
+    for (auto it = mChildren.rbegin(); it != mChildren.rend(); ++it) {
+        Widget *child = *it;
+        if (child->visible() && child->contains(p - mPos) && filter(child))
+            return child->findWidget(p - mPos, filter);
     }
     return contains(p) ? this : nullptr;
 }
@@ -161,11 +170,8 @@ void Widget::addChild(Widget * widget) {
 
 void Widget::removeChild(const Widget *widget) {
     // Clear focus path if necessary
-    Widget *screen = this;
-    while (screen->parent())
-        screen = screen->parent();
-    std::vector<Widget *>& focusPath = ((Screen *) screen)->mFocusPath;
-    Widget *&dragWidget = ((Screen *) screen)->mDragWidget;
+    std::vector<Widget *>& focusPath = screen()->mFocusPath;
+    Widget *&dragWidget = screen()->mDragWidget;
     if (std::find(focusPath.begin(), focusPath.end(), widget) != focusPath.end())
         focusPath.clear();
     if (dragWidget==widget)

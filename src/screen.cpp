@@ -522,20 +522,20 @@ bool Screen::mouseButtonCallbackEvent(int button, int action, int modifiers) {
         else
             mMouseState &= ~(1 << button);
 
-        auto dropWidget = findWidget(mMousePos);
-        if (mDragActive && action == GLFW_RELEASE &&
-            dropWidget != mDragWidget)
+        if (mDragActive && action == GLFW_RELEASE)
             mDragWidget->mouseButtonEvent(
                 mMousePos - mDragWidget->parent()->absolutePosition(), button,
                 false, mModifiers);
 
+        // refresh drop widget in case it was deleted during the mouse button event
+        auto dropWidget = findWidget(mMousePos);
         if (dropWidget != nullptr && dropWidget->cursor() != mCursor) {
             mCursor = dropWidget->cursor();
             glfwSetCursor(mGLFWWindow, mCursors[(int) mCursor]);
         }
 
         if (action == GLFW_PRESS && (button == GLFW_MOUSE_BUTTON_1 || button == GLFW_MOUSE_BUTTON_2)) {
-            mDragWidget = findWidget(mMousePos);
+            mDragWidget = findWidget(mMousePos, [](const Widget* w) { return w->draggable(); });
             if (mDragWidget == this)
                 mDragWidget = nullptr;
             mDragActive = mDragWidget != nullptr;
@@ -628,11 +628,11 @@ bool Screen::resizeCallbackEvent(int, int) {
 void Screen::updateFocus(Widget *widget) {
     // Construct new focus path
     std::vector<Widget*> newFocusPath;
-    Widget *window = nullptr;
+    Window *window = nullptr;
     while (widget) {
         newFocusPath.push_back(widget);
         if (dynamic_cast<Window *>(widget))
-            window = widget;
+            window = (Window *) widget;
         widget = widget->parent();
     }
 
@@ -650,8 +650,8 @@ void Screen::updateFocus(Widget *widget) {
     for (auto it = mFocusPath.rbegin(); it != mFocusPath.rend(); ++it)
         (*it)->focusEvent(true);
 
-    if (window)
-        moveWindowToFront((Window *) window);
+    if (window && !window->isBackgroundWindow())
+        moveWindowToFront(window);
 }
 
 void Screen::disposeWindow(Window *window) {
