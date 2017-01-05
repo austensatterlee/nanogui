@@ -522,13 +522,14 @@ bool Screen::mouseButtonCallbackEvent(int button, int action, int modifiers) {
         else
             mMouseState &= ~(1 << button);
 
-        if (mDragActive && action == GLFW_RELEASE)
+        auto dropWidget = findWidget(mMousePos, [](const Widget* w) { return w->draggable(); });
+        if (mDragActive && action == GLFW_RELEASE && dropWidget!=mDragWidget)
             mDragWidget->mouseButtonEvent(
                 mMousePos - mDragWidget->parent()->absolutePosition(), button,
                 false, mModifiers);
 
         // refresh drop widget in case it was deleted during the mouse button event
-        auto dropWidget = findWidget(mMousePos);
+        dropWidget = findWidget(mMousePos, [](const Widget* w) { return w->draggable(); });
         if (dropWidget != nullptr && dropWidget->cursor() != mCursor) {
             mCursor = dropWidget->cursor();
             glfwSetCursor(mGLFWWindow, mCursors[(int) mCursor]);
