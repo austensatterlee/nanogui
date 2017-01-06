@@ -23,7 +23,9 @@ NAMESPACE_BEGIN(nanogui)
 ColorPicker::ColorPicker(Widget *parent, const Color& color, bool requireButtonClick) : PopupButton(parent, ""), mRequireButtonClick(requireButtonClick) {
     setBackgroundColor(color);
     Popup *popup = this->popup();
-    popup->setLayout(new BoxLayout(Orientation::Vertical, Alignment::Middle, 5, 5));
+    auto l = new GridLayout(Orientation::Horizontal, 1, Alignment::Fill, 5, 5);
+    popup->setLayout(l);
+    l->setRowAlignment({Alignment::Fill, Alignment::Fill, Alignment::Fill, Alignment::Middle});
 
     mAlphaSlider = new Slider(popup);
     mAlphaSlider->setRange({ 0.0f,1.0f });
@@ -72,6 +74,8 @@ ColorPicker::ColorPicker(Widget *parent, const Color& color, bool requireButtonC
             }
             i++;
         }
+        mAlphaSlider->setValue(value.w());
+        mColorWheel->setColor(value);
         mColorWheel->callback()(value);
         return true;
     });
