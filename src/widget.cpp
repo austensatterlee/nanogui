@@ -82,10 +82,10 @@ Widget *Widget::findWidget(const Vector2i &p) {
 Widget* Widget::findWidget(const Vector2i& p, std::function<bool(const Widget*)> filter){
     for (auto it = mChildren.rbegin(); it != mChildren.rend(); ++it) {
         Widget *child = *it;
-        if (child->visible() && child->contains(p - mPos) && filter(child))
+        if (child->visible() && child->contains(p - mPos))
             return child->findWidget(p - mPos, filter);
     }
-    return contains(p) ? this : nullptr;
+    return filter(this) && contains(p) ? this : nullptr;
 }
 
 bool Widget::mouseButtonEvent(const Vector2i &p, int button, bool down, int modifiers) {
@@ -170,12 +170,19 @@ void Widget::addChild(Widget * widget) {
 
 void Widget::removeChild(const Widget *widget) {
     // Clear focus path if necessary
-    std::vector<Widget *>& focusPath = screen()->mFocusPath;
-    Widget *&dragWidget = screen()->mDragWidget;
+    std::vector<Widget *>& focusPath = screen()->mFocusPath;    
     if (std::find(focusPath.begin(), focusPath.end(), widget) != focusPath.end())
         focusPath.clear();
-    if (dragWidget==widget)
-        dragWidget=nullptr;
+    // Reset the drag widget if it is a descendent of the widget marked for deletion
+    Widget *dragWidget = screen()->mDragWidget;
+    while (dragWidget){
+        if(dragWidget==widget){
+            screen()->mDragWidget = nullptr;
+            screen()->mDragActive = false;
+            break;
+        }
+        dragWidget=dragWidget->parent();
+    }
 
     mChildren.erase(std::remove(mChildren.begin(), mChildren.end(), widget), mChildren.end());
     widget->decRef();
@@ -240,9 +247,13 @@ void Widget::draw(NVGcontext *ctx) {
     if (mChildren.empty())
         return;
 
+    std::vector<Widget*> children(mChildren);
+	for (Widget * w : children)
+		w->incRef();
+
     nvgSave(ctx);
     nvgTranslate(ctx, mPos.x(), mPos.y());
-    for (auto child : mChildren) {
+    for (auto child : children) {
         if (child->visible()) {
             nvgSave(ctx);
             nvgIntersectScissor(ctx, child->mPos.x(), child->mPos.y(), child->mSize.x(), child->mSize.y());
@@ -251,6 +262,9 @@ void Widget::draw(NVGcontext *ctx) {
         }
     }
     nvgRestore(ctx);
+    
+    for (Widget * w : children)
+		w->decRef();
 }
 
 void Widget::save(Serializer &s) const {

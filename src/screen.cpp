@@ -392,7 +392,7 @@ void Screen::drawWidgets() {
 
     double elapsed = glfwGetTime() - mLastInteraction;
 
-    if (elapsed > 0.5f) {
+    if (elapsed > 0.0125f) {
         /* Draw tooltips */
         const Widget *widget = findWidget(mMousePos);
         if (widget && !widget->tooltip().empty()) {

@@ -32,7 +32,7 @@ public:
     int chevronIcon() const { return mChevronIcon; }
 
     /// When true, the popup disappears after the next interaction.
-    void setDisposable(bool transient){ mDisposable = transient; }
+    void setDisposable(bool disposable){ mDisposable = disposable; }
     bool disposable() const { return mDisposable; }    
 
     void setSide(Popup::Side popupSide);
