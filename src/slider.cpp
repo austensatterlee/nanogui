@@ -34,7 +34,7 @@ void Slider::draw(NVGcontext* ctx) {
     if(mEnabled && isMousePressed)
     {
         // Mouse pos relative to our parent.
-        auto mousePos = screen()->mousePos() - absolutePosition() + position();
+        Vector2i mousePos = screen()->mousePos() - absolutePosition() + position();
         if(contains(mousePos))
         {
             bool isShiftDown = glfwGetKey(glfwWindow, GLFW_KEY_LEFT_SHIFT)==GLFW_PRESS;
