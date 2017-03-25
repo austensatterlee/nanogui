@@ -12,15 +12,22 @@
 #include <nanogui/combobox.h>
 #include <nanogui/layout.h>
 #include <nanogui/serializer/core.h>
+#include <nanogui/vscrollpanel.h>
 #include <cassert>
 
 NAMESPACE_BEGIN(nanogui)
 
 ComboBox::ComboBox(Widget *parent) : PopupButton(parent), mSelectedIndex(0) {
+    mPopup->setLayout(new BoxLayout(Orientation::Vertical, Alignment::Fill));
+    mScrollPanel = new VScrollPanel(mPopup);
+    mScrollPanel->setFixedHeight(200);
+    mScrollPanelChild = new Widget(mScrollPanel);
+    mScrollPanelChild->setLayout(new BoxLayout(Orientation::Vertical, Alignment::Fill));
+    setDisposable(true);
 }
 
 ComboBox::ComboBox(Widget *parent, const std::vector<std::string> &items)
-    : PopupButton(parent), mSelectedIndex(0) {
+    : ComboBox(parent) {
     setItems(items);
 }
 
@@ -32,7 +39,7 @@ ComboBox::ComboBox(Widget *parent, const std::vector<std::string> &items, const 
 void ComboBox::setSelectedIndex(int idx) {
     if (mItemsShort.empty())
         return;
-    const std::vector<Widget *> &children = popup()->children();
+    const std::vector<Widget *> &children = mScrollPanelChild->children();
     ((Button *) children[mSelectedIndex])->setPushed(false);
     ((Button *) children[idx])->setPushed(true);
     mSelectedIndex = idx;
@@ -45,13 +52,13 @@ void ComboBox::setItems(const std::vector<std::string> &items, const std::vector
     mItemsShort = itemsShort;
     if (mSelectedIndex < 0 || mSelectedIndex >= (int) items.size())
         mSelectedIndex = 0;
-    while (mPopup->childCount() != 0)
-        mPopup->removeChild(mPopup->childCount()-1);
-    mPopup->setLayout(new GroupLayout(10));
+    while (mScrollPanelChild->childCount() != 0)
+        mScrollPanelChild->removeChild(mScrollPanelChild->childCount()-1);
+    mScrollPanelChild->setLayout(new GroupLayout(10));
     int index = 0;
     for (const auto &str: items) {
-        Button *button = new Button(mPopup, str);
-        button->setFlags(Button::RadioButton);
+        Button *button = new Button(mScrollPanelChild, str);
+        button->setFlags(RadioButton);
         button->setCallback([&, index] {
             mSelectedIndex = index;
             setCaption(mItemsShort[index]);

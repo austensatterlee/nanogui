@@ -52,6 +52,8 @@ public:
     virtual void save(Serializer &s) const override;
     virtual bool load(Serializer &s) override;
 protected:
+    VScrollPanel *mScrollPanel;
+    Widget *mScrollPanelChild;
     std::vector<std::string> mItems, mItemsShort;
     std::function<void(int)> mCallback;
     int mSelectedIndex;
