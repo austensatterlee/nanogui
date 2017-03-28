@@ -42,6 +42,7 @@ public:
 
     std::function<void(float)> finalCallback() const { return mFinalCallback; }
     void setFinalCallback(const std::function<void(float)> &callback) { mFinalCallback = callback; }
+    bool mouseDragEvent(const Vector2i& p, const Vector2i& rel, int button, int modifiers) override;
 
     virtual Vector2i preferredSize(NVGcontext *ctx) const override;
     virtual void draw(NVGcontext* ctx) override;

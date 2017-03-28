@@ -23,6 +23,13 @@ Slider::Slider(Widget *parent)
     mHighlightColor = Color(255, 80, 80, 70);
 }
 
+bool Slider::mouseDragEvent(const Vector2i& p, const Vector2i& rel, int button, int modifiers)
+{
+    if(!mEnabled)
+        return false;
+    return true;
+}
+
 Vector2i Slider::preferredSize(NVGcontext *) const {
     return Vector2i(70, 16);
 }
@@ -30,26 +37,22 @@ Vector2i Slider::preferredSize(NVGcontext *) const {
 void Slider::draw(NVGcontext* ctx) {
     /* Update value on click+hold. */
     GLFWwindow* glfwWindow = screen()->glfwWindow();
-    bool isMousePressed = glfwGetMouseButton(glfwWindow, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
-    if(mEnabled && isMousePressed)
+    if(mEnabled && screen()->dragWidget()==this)
     {
         // Mouse pos relative to our parent.
-        Vector2i mousePos = screen()->mousePos() - absolutePosition() + position();
-        if(contains(mousePos))
-        {
-            bool isShiftDown = glfwGetKey(glfwWindow, GLFW_KEY_LEFT_SHIFT)==GLFW_PRESS;
-            const float kr = (int) (mSize.y() * 0.4f), kshadow = 3;
-            const float startX = kr + kshadow + mPos.x() - 1;
-            const float widthX = mSize.x() - 2 * (kr + kshadow);
-            const float changeSpeed = isShiftDown ? 0.1 : 0.9;
+        Vector2i mousePos = screen()->mousePos() - absolutePosition() + position();        
+        bool isShiftDown = glfwGetKey(glfwWindow, GLFW_KEY_LEFT_SHIFT)==GLFW_PRESS;
+        const float kr = (int) (mSize.y() * 0.4f), kshadow = 3;
+        const float startX = kr + kshadow + mPos.x() - 1;
+        const float widthX = mSize.x() - 2 * (kr + kshadow);
+        const float changeSpeed = isShiftDown ? 0.05 : 0.5;
 
-            float newValue = (mousePos.x() - startX) / widthX;
-            newValue = newValue * (mRange.second - mRange.first) + mRange.first;
-            mValue = mValue + changeSpeed * (newValue - mValue);
-            mValue = std::min(std::max(mValue, mRange.first), mRange.second);
-            if (mCallback)
-                mCallback(mValue);
-        }
+        float newValue = (mousePos.x() - startX) / widthX;
+        newValue = newValue * (mRange.second - mRange.first) + mRange.first;
+        mValue = mValue + changeSpeed * (newValue - mValue);
+        mValue = std::min(std::max(mValue, mRange.first), mRange.second);
+        if (mCallback)
+            mCallback(mValue);        
     }
 
     /* Draw slider */
