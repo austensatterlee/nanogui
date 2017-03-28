@@ -23,7 +23,7 @@ ComboBox::ComboBox(Widget *parent) : PopupButton(parent), mSelectedIndex(0) {
     mScrollPanel->setFixedHeight(200);
     mScrollPanelChild = new Widget(mScrollPanel);
     mScrollPanelChild->setLayout(new BoxLayout(Orientation::Vertical, Alignment::Fill));
-    setDisposable(true);
+    mPopup->setDisposable(true);
 }
 
 ComboBox::ComboBox(Widget *parent, const std::vector<std::string> &items)

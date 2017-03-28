@@ -14,12 +14,17 @@
 #include <nanogui/theme.h>
 #include <nanogui/opengl.h>
 #include <nanogui/serializer/core.h>
+#include "nanogui/popupbutton.h"
 
 NAMESPACE_BEGIN(nanogui)
 
-Popup::Popup(Widget *parent, Window *parentWindow)
-    : Window(parent, ""), mParentWindow(parentWindow),
+Popup::Popup(Widget *parent, Window *parentWindow, PopupButton *parentButton)
+    : Window(parent, ""), mParentWindow(parentWindow), mParentButton(parentButton), 
       mAnchorPos(Vector2i::Zero()), mAnchorHeight(30), mSide(Side::Right) {
+}
+
+Popup::Popup(Widget *parent, Window *parentWindow) 
+    : Popup(parent, parentWindow) {
 }
 
 void Popup::performLayout(NVGcontext *ctx) {
@@ -41,6 +46,14 @@ void Popup::refreshRelativePlacement() {
 }
 
 void Popup::draw(NVGcontext* ctx) {
+
+    if (disposable() && !focused()) {
+        setVisible(false);
+        if (mParentButton) {
+            mParentButton->mPushed = false;
+        } 
+    }
+
     refreshRelativePlacement();
 
     if (!mVisible)

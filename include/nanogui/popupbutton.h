@@ -24,16 +24,13 @@ NAMESPACE_BEGIN(nanogui)
  * \brief Button which launches a popup widget.
  */
 class NANOGUI_EXPORT PopupButton : public Button {
+    friend class Popup;
 public:
     PopupButton(Widget *parent, const std::string &caption = "Untitled",
                 int buttonIcon = 0);
 
     void setChevronIcon(int icon) { mChevronIcon = icon; }
     int chevronIcon() const { return mChevronIcon; }
-
-    /// When true, the popup disappears after the next interaction.
-    void setDisposable(bool disposable){ mDisposable = disposable; }
-    bool disposable() const { return mDisposable; }    
 
     void setSide(Popup::Side popupSide);
     Popup::Side side() const { return mPopup->side(); }
@@ -50,7 +47,6 @@ public:
 protected:
     Popup *mPopup;
     int mChevronIcon;
-    bool mDisposable;
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };

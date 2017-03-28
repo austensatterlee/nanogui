@@ -14,20 +14,21 @@
 #include <nanogui/theme.h>
 #include <nanogui/opengl.h>
 #include <nanogui/serializer/core.h>
+#include "nanogui/screen.h"
 
 NAMESPACE_BEGIN(nanogui)
 
 PopupButton::PopupButton(Widget *parent, const std::string &caption, int buttonIcon)
     : Button(parent, caption, buttonIcon),
-      mChevronIcon(ENTYPO_ICON_CHEVRON_SMALL_RIGHT),
-      mDisposable(false) {
+      mChevronIcon(ENTYPO_ICON_CHEVRON_SMALL_RIGHT) {
 
     setFlags(Flags::ToggleButton | Flags::PopupButton);
 
     Window *parentWindow = window();
-    mPopup = new Popup(parentWindow->parent(), window());
+    mPopup = new Popup(parentWindow->parent(), window(), this);
     mPopup->setSize(Vector2i(320, 250));
     mPopup->setVisible(false);
+    mPopup->setDisposable(true);
 }
 
 Vector2i PopupButton::preferredSize(NVGcontext *ctx) const {
@@ -35,10 +36,15 @@ Vector2i PopupButton::preferredSize(NVGcontext *ctx) const {
 }
 
 void PopupButton::draw(NVGcontext* ctx) {
-    if ((!mEnabled || (mDisposable && !(focused() || mPopup->focused()))) && mPushed)
+    if (!mEnabled && mPushed)
         mPushed = false;
 
+    if (mPushed && !mPopup->visible())
+    {
+        screen()->updateFocus(mPopup);
+    }
     mPopup->setVisible(mPushed);
+    
     Button::draw(ctx);
 
     if (mChevronIcon) {

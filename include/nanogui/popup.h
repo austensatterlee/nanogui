@@ -30,12 +30,17 @@ public:
     enum Side { Left = 0, Right };
 
     /// Create a new popup parented to a screen (first argument) and a parent window
+    Popup(Widget *parent, Window *parentWindow, PopupButton *parentButton);
     Popup(Widget *parent, Window *parentWindow);
 
     /// Return the anchor position in the parent window; the placement of the popup is relative to it
     void setAnchorPos(const Vector2i &anchorPos) { mAnchorPos = anchorPos; }
     /// Set the anchor position in the parent window; the placement of the popup is relative to it
     const Vector2i &anchorPos() const { return mAnchorPos; }
+
+    /// When true, the popup disappears after the next interaction.
+    void setDisposable(bool disposable){ mDisposable = disposable; }
+    bool disposable() const { return mDisposable; }    
 
     /// Set the anchor height; this determines the vertical shift relative to the anchor position
     void setAnchorHeight(int anchorHeight) { mAnchorHeight = anchorHeight; }
@@ -63,12 +68,13 @@ public:
 protected:
     /// Internal helper function to maintain nested window position values
     virtual void refreshRelativePlacement() override;
-
 protected:
     Window *mParentWindow;
+    PopupButton *mParentButton;
     Vector2i mAnchorPos;
     int mAnchorHeight;
     Side mSide;
+    bool mDisposable;
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
