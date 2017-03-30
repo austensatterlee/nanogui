@@ -173,7 +173,7 @@ bool Window::mouseButtonEvent(const Vector2i &p, int button, bool down, int modi
         mDrag = down && (p.y() - mPos.y()) < mTheme->mWindowHeaderHeight;
         return true;
     }
-    return false;
+    return true;
 }
 
 bool Window::scrollEvent(const Vector2i &p, const Vector2f &rel) {
