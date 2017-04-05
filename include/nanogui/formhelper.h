@@ -183,8 +183,12 @@ public:
             if (value != current)
                 widget->setValue(value);
         };
+        auto setterWrapper = [widget, refresh, setter] (const Type& a_val) {
+            setter(a_val);
+            refresh();
+        };
         refresh();
-        widget->setCallback(setter);
+        widget->setCallback(setterWrapper);
         widget->setEditable(editable);
         widget->setFontSize(mWidgetFontSize);
         Vector2i fs = widget->fixedSize();
