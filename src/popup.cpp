@@ -19,12 +19,11 @@
 NAMESPACE_BEGIN(nanogui)
 
 Popup::Popup(Widget *parent, Window *parentWindow, PopupButton *parentButton)
-    : Window(parent, ""), mParentWindow(parentWindow), mParentButton(parentButton), 
-      mAnchorPos(Vector2i::Zero()), mAnchorHeight(30), mSide(Side::Right) {
-}
+        : Window(parent, ""), mParentWindow(parentWindow), mParentButton(parentButton),
+          mAnchorPos(Vector2i::Zero()), mAnchorHeight(30), mSide(Side::Right), mDisposable(false) {}
 
 Popup::Popup(Widget *parent, Window *parentWindow) 
-    : Popup(parent, parentWindow) {
+    : Popup(parent, parentWindow, nullptr) {
 }
 
 void Popup::performLayout(NVGcontext *ctx) {
