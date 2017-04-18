@@ -37,7 +37,7 @@ Vector2i Slider::preferredSize(NVGcontext *) const {
 void Slider::draw(NVGcontext* ctx) {
     /* Update value on click+hold. */
     GLFWwindow* glfwWindow = screen()->glfwWindow();
-    if(mEnabled && screen()->dragWidget()==this)
+    if(mEnabled && screen()->draggingWidget()==this)
     {
         // Mouse pos relative to our parent.
         Vector2i mousePos = screen()->mousePos() - absolutePosition() + position();        

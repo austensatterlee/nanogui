@@ -172,7 +172,7 @@ public:
     /// Initialize the \ref Screen
     void initialize(GLFWwindow *window, bool shutdownGLFWOnDestruct);
 
-    Widget *dragWidget() const { return mDragWidget; }
+    Widget *draggingWidget() const { return mDragWidget; }
 
     /* Event handlers */
     bool cursorPosCallbackEvent(double x, double y);

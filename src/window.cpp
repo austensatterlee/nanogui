@@ -159,7 +159,10 @@ bool Window::mouseDragEvent(const Vector2i &, const Vector2i &rel,
                             int button, int /* modifiers */) {
     if (mDrag && (button & (1 << GLFW_MOUSE_BUTTON_1)) != 0) {
         mPos += rel;
-        mPos = mPos.cwiseMax(Vector2i::Ones()*50.0);
+        mPos.x() = std::max(mPos.x(), mTheme->mWindowHeaderHeight - width());
+        mPos.x() = std::min(mPos.x(), parent()->width() - mTheme->mWindowHeaderHeight);
+        mPos.y() = std::min(mPos.y(), parent()->height() - mTheme->mWindowHeaderHeight);
+        mPos.y() = std::max(mPos.y(), 0);
         mPos = mPos.cwiseMin(parent()->size() - Vector2i::Ones()*mTheme->mWindowHeaderHeight);
         return true;
     }
