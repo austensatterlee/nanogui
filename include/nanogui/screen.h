@@ -136,6 +136,9 @@ public:
     /// Return the last observed mouse position value
     Vector2i mousePos() const { return mMousePos; }
 
+    /// Return the current FPS estimation
+    float fps() const { return mFPS; }
+
     /// Return a pointer to the underlying GLFW window data structure
     GLFWwindow *glfwWindow() { return mGLFWWindow; }
 
@@ -211,6 +214,7 @@ protected:
     bool mShutdownGLFWOnDestruct;
     bool mFullscreen;
     std::function<void(Vector2i)> mResizeCallback;
+    float mFPS;
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };

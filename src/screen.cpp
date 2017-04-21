@@ -121,7 +121,7 @@ Screen::Screen()
        mCursor(Cursor::Arrow),
 #endif
        mBackground(0.3f, 0.3f, 0.32f, 1.f),
-      mShutdownGLFWOnDestruct(false), mFullscreen(false) {
+      mShutdownGLFWOnDestruct(false), mFullscreen(false), mFPS(0.0) {
 #if !defined(NANOGUI_CURSOR_DISABLED)
     memset(mCursors, 0, sizeof(GLFWcursor *) * (int) Cursor::CursorCount);
 #endif
@@ -136,7 +136,7 @@ Screen::Screen(const Vector2i &size, const std::string &caption, bool resizable,
       mCursor(Cursor::Arrow),
 #endif
       mBackground(0.3f, 0.3f, 0.32f, 1.f), mCaption(caption),
-      mShutdownGLFWOnDestruct(false), mFullscreen(fullscreen) {
+      mShutdownGLFWOnDestruct(false), mFullscreen(fullscreen), mFPS(0.0) {
 #if !defined(NANOGUI_CURSOR_DISABLED)
     memset(mCursors, 0, sizeof(GLFWcursor *) * (int) Cursor::CursorCount);
 #endif
@@ -399,7 +399,9 @@ void Screen::setSize(const Vector2i &size) {
 #endif
 }
 
-void Screen::drawAll() {
+void Screen::drawAll() {    
+    double cpuStartTime = glfwGetTime();
+
     glClearColor(mBackground[0], mBackground[1], mBackground[2], mBackground[3]);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
@@ -407,6 +409,10 @@ void Screen::drawAll() {
     drawWidgets();
 
     glfwSwapBuffers(mGLFWWindow);
+    
+    float dCpuTime = glfwGetTime() - cpuStartTime;
+    float fps = 1. / dCpuTime;
+    mFPS = mFPS + 0.0175 * (fps - mFPS);
 }
 
 void Screen::drawWidgets() {
