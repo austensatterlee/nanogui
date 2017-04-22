@@ -16,6 +16,7 @@
 #include <stdint.h>
 #include <array>
 #include <vector>
+#include <nanovg.h>
 
 /* Set to 1 to draw boxes around widgets */
 //#define NANOGUI_SHOW_WIDGET_BOUNDS 1
@@ -307,6 +308,11 @@ public:
      * The alpha component of the color, will be divided by ``255.0``.
      */
     Color(int r, int g, int b, int a) : Color(Vector4i(r, g, b, a)) { }
+
+    /**
+     * Convert NVGcolor to Color.
+     */
+    Color(const NVGcolor& a_color) : Color(a_color.r, a_color.g, a_color.b, a_color.a) { };
 
     /// Construct a color vector from MatrixBase (needed to play nice with Eigen)
     template <typename Derived> Color(const Eigen::MatrixBase<Derived>& p)
