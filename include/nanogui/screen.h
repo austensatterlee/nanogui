@@ -205,6 +205,8 @@ protected:
     float mPixelRatio;
     int mMouseState, mModifiers;
     Vector2i mMousePos;
+    double mLastMouseDownTime;
+    double mLastMouseUpTime;
     bool mDragActive;
     Widget *mDragWidget = nullptr;
     double mLastInteraction;

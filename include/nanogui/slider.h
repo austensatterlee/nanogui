@@ -28,6 +28,9 @@ public:
     float value() const { return mValue; }
     void setValue(float value) { mValue = value; }
 
+    float defaultValue() const { return mDefaultValue; }
+    void setDefaultValue(float defaultValue) { mDefaultValue = defaultValue; }
+
     const Color &highlightColor() const { return mHighlightColor; }
     void setHighlightColor(const Color &highlightColor) { mHighlightColor = highlightColor; }
 
@@ -43,6 +46,7 @@ public:
     std::function<void(float)> finalCallback() const { return mFinalCallback; }
     void setFinalCallback(const std::function<void(float)> &callback) { mFinalCallback = callback; }
     bool mouseDragEvent(const Vector2i& p, const Vector2i& rel, int button, int modifiers) override;
+    bool mouseButtonEvent(const Vector2i& p, int button, bool down, int modifiers) override;
 
     virtual Vector2i preferredSize(NVGcontext *ctx) const override;
     virtual void draw(NVGcontext* ctx) override;
@@ -50,7 +54,7 @@ public:
     virtual bool load(Serializer &s) override;
 
 protected:
-    float mValue;
+    float mValue, mDefaultValue;
     std::function<void(float)> mCallback;
     std::function<void(float)> mFinalCallback;
     std::pair<float, float> mRange;

@@ -575,6 +575,23 @@ bool Screen::mouseButtonCallbackEvent(int button, int action, int modifiers) {
         else
             mMouseState &= ~(1 << button);
 
+        // Detect double clicks
+        if (button == GLFW_MOUSE_BUTTON_LEFT) {
+            if (action == GLFW_PRESS) {
+                mLastMouseDownTime = glfwGetTime();
+            }
+            if (mLastMouseUpTime >= 0 && (glfwGetTime() - mLastMouseUpTime) > 0.2)
+                mLastMouseUpTime = -1;
+            if (action == GLFW_RELEASE && button == GLFW_MOUSE_BUTTON_LEFT) {
+                if (glfwGetTime() - mLastMouseUpTime < 0.2) {
+                    mModifiers |= GLFW_MOD_DOUBLE_CLICK;
+                    mLastMouseUpTime = -1;
+                } else {
+                    mLastMouseUpTime = glfwGetTime();
+                }
+            }
+        }
+
         auto dropWidget = findWidget(mMousePos, [](const Widget* w) { return w->draggable(); });
         if (mDragActive && action == GLFW_RELEASE && dropWidget!=mDragWidget)
             mDragWidget->mouseButtonEvent(

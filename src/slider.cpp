@@ -30,6 +30,15 @@ bool Slider::mouseDragEvent(const Vector2i& p, const Vector2i& rel, int button, 
     return true;
 }
 
+bool Slider::mouseButtonEvent(const Vector2i& p, int button, bool down, int modifiers) {
+    if(modifiers & GLFW_MOD_DOUBLE_CLICK) {
+        setValue(defaultValue());        
+        if (mCallback)
+            mCallback(mValue);        
+    }
+    return true;
+}
+
 Vector2i Slider::preferredSize(NVGcontext *) const {
     return Vector2i(70, 16);
 }

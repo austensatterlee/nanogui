@@ -15,6 +15,9 @@
 #include <nanogui/object.h>
 #include <vector>
 
+/// If this bit is set the mouse event is a double click
+#define GLFW_MOD_DOUBLE_CLICK 0x0008
+
 NAMESPACE_BEGIN(nanogui)
 
 enum class Cursor;// do not put a docstring, this is already documented
@@ -214,13 +217,19 @@ public:
     /// Determine the widget located at the given position value (recursive)
     Widget *findWidget(const Vector2i &p);
 
-    /// Determine the widget located at the given position value that matches the given filter function
+    /// Determine the widget located at the given position value that matches the given filter function (recursive)
     Widget *findWidget(const Vector2i &p, std::function<bool(const Widget*)> filter);
 
-    /// Handle a mouse button event (default implementation: propagate to children)
+    /**
+     * Handle a mouse button event (default implementation: propagate to children).
+     * Implementations of this function may return true to stop the event from propogating.
+     */
     virtual bool mouseButtonEvent(const Vector2i &p, int button, bool down, int modifiers);
 
-    /// Handle a mouse motion event (default implementation: propagate to children)
+    /**
+     * Handle a mouse motion event (default implementation: propagate to children)
+     * Implementations of this function may return true to stop the event from propogating.
+     */
     virtual bool mouseMotionEvent(const Vector2i &p, const Vector2i &rel, int button, int modifiers);
 
     /// Handle a mouse drag event (default implementation: do nothing)
@@ -229,7 +238,10 @@ public:
     /// Handle a mouse enter/leave event (default implementation: record this fact, but do nothing)
     virtual bool mouseEnterEvent(const Vector2i &p, bool enter);
 
-    /// Handle a mouse scroll event (default implementation: propagate to children)
+    /**
+     * Handle a mouse scroll event (default implementation: propagate to children)
+     * Implementations of this function may return true to stop the event from propogating.
+     */
     virtual bool scrollEvent(const Vector2i &p, const Vector2f &rel);
 
     /// Handle a focus change event (default implementation: record the focus status, but do nothing)
