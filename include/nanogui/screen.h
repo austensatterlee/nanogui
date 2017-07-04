@@ -194,6 +194,9 @@ public:
     void drawWidgets();
 
 protected:
+    void deinitialize();
+
+protected:
     GLFWwindow *mGLFWWindow;
     NVGcontext *mNVGContext;
 #if !defined(NANOGUI_CURSOR_DISABLED)

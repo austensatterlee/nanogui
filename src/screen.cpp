@@ -297,6 +297,7 @@ Screen::Screen(const Vector2i &size, const std::string &caption, bool resizable,
 }
 
 void Screen::initialize(GLFWwindow *window, bool shutdownGLFWOnDestruct) {
+    deinitialize();
     mGLFWWindow = window;
     mShutdownGLFWOnDestruct = shutdownGLFWOnDestruct;
     glfwGetWindowSize(mGLFWWindow, &mSize[0], &mSize[1]);
@@ -357,18 +358,29 @@ void Screen::initialize(GLFWwindow *window, bool shutdownGLFWOnDestruct) {
     nvgEndFrame(mNVGContext);
 }
 
-Screen::~Screen() {
-    __nanogui_screens.erase(mGLFWWindow);
+void Screen::deinitialize() {
 #if !defined(NANOGUI_CURSOR_DISABLED)
     for (int i=0; i < (int) Cursor::CursorCount; ++i) {
-        if (mCursors[i])
+        if (mCursors[i]){
             glfwDestroyCursor(mCursors[i]);
+            mCursors[i] = nullptr;
+        }
     }
 #endif
-    if (mNVGContext)
+    if (mNVGContext){
         nvgDeleteContext(mNVGContext);
-    if (mGLFWWindow && mShutdownGLFWOnDestruct)
-        glfwDestroyWindow(mGLFWWindow);
+        mNVGContext = nullptr;
+    }
+    if(mGLFWWindow){
+        __nanogui_screens.erase(mGLFWWindow);
+        if (mShutdownGLFWOnDestruct)
+            glfwDestroyWindow(mGLFWWindow);
+        mGLFWWindow = nullptr;
+    }
+}
+
+Screen::~Screen() {
+    deinitialize();
 }
 
 void Screen::setVisible(bool visible) {
