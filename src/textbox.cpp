@@ -299,9 +299,27 @@ bool TextBox::mouseButtonEvent(const Vector2i &p, int button, bool down,
                 mSelectionPos = 0;
                 mCursorPos = (int) mValueTemp.size();
                 mMouseDownPos = Vector2i(-1, -1);
+                // Copy entire textbox on shift+dbl click
+                if (modifiers & GLFW_MOD_SHIFT && button==GLFW_MOUSE_BUTTON_LEFT)
+                    copySelection();
+            } 
+            // Replace textbox with clipboard contents on ctrl+shift+click
+            if ((modifiers & GLFW_MOD_SHIFT) && (modifiers & GLFW_MOD_CONTROL) && (button == GLFW_MOUSE_BUTTON_LEFT)) {
+                mSelectionPos = 0;
+                mCursorPos = (int)mValueTemp.size();
+                mMouseDownPos = Vector2i(-1, -1);
+                deleteSelection();
+                pasteFromClipboard();
+                mSelectionPos = 0;
+                mCursorPos = (int)mValueTemp.size();
             }
             mLastClick = time;
         } else {
+            // Copy selection after shift+dragging
+            if (modifiers & GLFW_MOD_SHIFT && button == GLFW_MOUSE_BUTTON_LEFT) {
+                copySelection();
+                mSelectionPos = -1;
+            }
             mMouseDownPos = Vector2i(-1, -1);
             mMouseDragPos = Vector2i(-1, -1);
         }

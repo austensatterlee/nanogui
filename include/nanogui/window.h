@@ -36,6 +36,7 @@ public:
     /// Set whether or not this is a modal dialog
     void setModal(bool modal) { mModal = modal; }
 
+    /// Background windows don't get brought to the front when they receive focus
     bool isBackgroundWindow() const { return mIsBackgroundWindow; }
     void setIsBackgroundWindow(bool a_isBackgroundWindow) { mIsBackgroundWindow = a_isBackgroundWindow; }
 

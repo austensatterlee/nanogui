@@ -167,6 +167,7 @@ public:
 
     /// Walk up hierarchy and return the parent screen
     Screen *screen();
+    const Screen *screen() const;
 
     /// Associate this widget with an ID value (optional)
     void setId(const std::string &id) { mId = id; }
@@ -191,7 +192,7 @@ public:
     void requestFocus();
 
     /// Return wheter or not this widget has mouse focus
-    bool mouseFocus() const { return mMouseFocus; }
+    bool mouseFocus() const;
 
     const std::string &tooltip() const { return mTooltip; }
     void setTooltip(const std::string &tooltip) { mTooltip = tooltip; }

@@ -20,7 +20,6 @@ NAMESPACE_BEGIN(nanogui)
 ComboBox::ComboBox(Widget *parent) : PopupButton(parent), mSelectedIndex(0) {
     mPopup->setLayout(new BoxLayout(Orientation::Vertical, Alignment::Fill));
     mScrollPanel = new VScrollPanel(mPopup);
-    mScrollPanel->setFixedHeight(200);
     mScrollPanelChild = new Widget(mScrollPanel);
     mScrollPanelChild->setLayout(new BoxLayout(Orientation::Vertical, Alignment::Fill));
     mPopup->setDisposable(true);

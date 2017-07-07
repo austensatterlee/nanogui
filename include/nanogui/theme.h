@@ -29,6 +29,7 @@ public:
     Theme(NVGcontext *ctx);
 
     /* Fonts */
+    int mFontMono;
     int mFontNormal;
     int mFontBold;
     int mFontIcons;

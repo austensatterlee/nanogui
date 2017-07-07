@@ -15,6 +15,7 @@
 #pragma once
 
 #include <nanogui/popupbutton.h>
+#include "textbox.h"
 
 NAMESPACE_BEGIN(nanogui)
 
@@ -36,10 +37,14 @@ public:
     /// Set the current color
     void setColor(const Color& color);
 protected:
+    void previewColor(const Color& color);
+
+protected:
     std::function<void(const Color &)> mCallback;
     Slider *mAlphaSlider;
     ColorWheel *mColorWheel;
-    TextBox *mColorText;
+    std::array<IntBox<int>*, 3> mRGB;
+    std::array<IntBox<int>*, 3> mHSL;
     Button *mPickButton;
     bool mRequireButtonClick;
 public:

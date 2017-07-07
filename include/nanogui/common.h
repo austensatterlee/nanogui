@@ -324,6 +324,62 @@ public:
         return *this;
     }
 
+    /// Generate this color's equivalent HSL representation
+    Eigen::Vector4f toHSLA() const {
+        Eigen::Vector3f rgb{ r(),g(),b() };
+        Index argmx;
+        float mx = rgb.maxCoeff(&argmx);
+        float mn = rgb.minCoeff();
+        float h, s, l = (mx + mn) / 2.0f;
+        if (mx == mn) {
+            h = s = 0.0f; // achromatic
+        } else {
+            float d = mx - mn;
+            s = l > 0.5f ? d / (2.0f - mx - mn) : d / (mx + mn);
+            switch (argmx) {
+            case 0:
+                h = (g() - b()) / d + (g() < b() ? 6.0f : 0);
+                break;
+            case 1:
+                h = (b() - r()) / d + 2.0f;
+                break;
+            case 2:
+            default:
+                h = (r() - g()) / d + 4.0f;
+                break;
+            }
+            h /= 6.0f;
+        }
+        return {h, s, l, a()};
+    }
+
+    /// Create an RGB color from an HSL representation
+    static Color fromHSLA(const Vector4f &hslaColor) {
+        float r1, g1, b1;
+        float h = hslaColor(0), s = hslaColor(1), l = hslaColor(2), a = hslaColor(3);
+
+        if (s == 0) {
+            r1 = g1 = b1 = l; // achromatic
+        } else {
+            auto hue2rgb = [](float p, float q, float t) {
+                if (t < 0.0f) t += 1;
+                if (t > 1.0f) t -= 1;
+                if (t < 1.0f / 6.0f) return p + (q - p) * 6.0f * t;
+                if (t < 1.0f / 2.0f) return q;
+                if (t < 2.0f / 3.0f) return p + (q - p) * (2.0f / 3.0f - t) * 6.0f;
+                return p;
+            };
+
+            float q = l < 0.5f ? l * (1 + s) : l + s - l * s;
+            float p = 2.0f * l - q;
+            r1 = hue2rgb(p, q, h + 1.0f / 3.0f);
+            g1 = hue2rgb(p, q, h);
+            b1 = hue2rgb(p, q, h - 1.0f / 3.0f);
+        }
+
+        return { r1,g1,b1,a };
+    }
+
     /// Return a reference to the red channel
     float &r() { return x(); }
     /// Return a reference to the red channel (const version)
@@ -336,6 +392,10 @@ public:
     float &b() { return z(); }
     /// Return a reference to the blue channel (const version)
     const float &b() const { return z(); }
+    /// Return a reference to the alpha channel
+    float &a() { return w(); }
+    /// Return a reference to the alpha channel (const version)
+    const float &a() const { return w(); }
 
     /**
      * Computes the luminance as ``l = 0.299r + 0.587g + 0.144b + 0.0a``.  If
