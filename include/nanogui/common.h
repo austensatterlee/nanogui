@@ -355,29 +355,8 @@ public:
 
     /// Create an RGB color from an HSL representation
     static Color fromHSLA(const Vector4f &hslaColor) {
-        float r1, g1, b1;
-        float h = hslaColor(0), s = hslaColor(1), l = hslaColor(2), a = hslaColor(3);
-
-        if (s == 0) {
-            r1 = g1 = b1 = l; // achromatic
-        } else {
-            auto hue2rgb = [](float p, float q, float t) {
-                if (t < 0.0f) t += 1;
-                if (t > 1.0f) t -= 1;
-                if (t < 1.0f / 6.0f) return p + (q - p) * 6.0f * t;
-                if (t < 1.0f / 2.0f) return q;
-                if (t < 2.0f / 3.0f) return p + (q - p) * (2.0f / 3.0f - t) * 6.0f;
-                return p;
-            };
-
-            float q = l < 0.5f ? l * (1 + s) : l + s - l * s;
-            float p = 2.0f * l - q;
-            r1 = hue2rgb(p, q, h + 1.0f / 3.0f);
-            g1 = hue2rgb(p, q, h);
-            b1 = hue2rgb(p, q, h - 1.0f / 3.0f);
-        }
-
-        return { r1,g1,b1,a };
+        unsigned char a = hslaColor(3)*255;
+        return Color{ nvgHSLA(hslaColor(0), hslaColor(1), hslaColor(2), a) };
     }
 
     /// Return a reference to the red channel

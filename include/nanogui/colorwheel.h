@@ -41,6 +41,9 @@ public:
     virtual bool mouseButtonEvent(const Vector2i &p, int button, bool down, int modifiers) override;
     virtual bool mouseDragEvent(const Vector2i &p, const Vector2i &rel, int button, int modifiers) override;
 
+    void setColorHWB(const Vector4f&);
+    Vector4f colorHWB() const;
+
     virtual void save(Serializer &s) const override;
     virtual bool load(Serializer &s) override;
 private:

@@ -63,6 +63,10 @@ public:
     /// Specify a regular expression specifying valid formats
     void setFormat(const std::string &format) { mFormat = format; }
 
+    /// Return the name of the preferred font face
+    const std::string &preferredFont() const { return mPreferredFont; }
+    void setPreferredFont(const std::string &preferredFont) { mPreferredFont = preferredFont; }
+
     /// Set the \ref Theme used to draw this widget
     virtual void setTheme(Theme *theme) override;
 
@@ -107,6 +111,7 @@ protected:
     Alignment mAlignment;
     std::string mUnits;
     std::string mFormat;
+    std::string mPreferredFont;
     int mUnitsImage;
     std::function<bool(const std::string& str)> mCallback;
     bool mValidFormat;
@@ -137,6 +142,7 @@ public:
     IntBox(Widget *parent, Scalar value = (Scalar) 0) : TextBox(parent) {
         setDefaultValue("0");
         setFormat(std::is_signed<Scalar>::value ? "[-]?[0-9]*" : "[0-9]*");
+        setPreferredFont("mono");
         setValueIncrement(1);
         setMinMaxValues(std::numeric_limits<Scalar>::lowest(), std::numeric_limits<Scalar>::max());
         setValue(value);
@@ -252,6 +258,7 @@ public:
         mNumberFormat = sizeof(Scalar) == sizeof(float) ? "%.4g" : "%.7g";
         setDefaultValue("0");
         setFormat("[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?");
+        setPreferredFont("mono");
         setValueIncrement((Scalar) 0.1);
         setMinMaxValues(std::numeric_limits<Scalar>::lowest(), std::numeric_limits<Scalar>::max());
         setValue(value);

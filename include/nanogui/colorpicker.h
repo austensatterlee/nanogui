@@ -32,21 +32,20 @@ public:
     std::function<void(const Color &)> callback() const                  { return mCallback; }
     void setCallback(const std::function<void(const Color &)> &callback) { mCallback = callback; }
 
-    /// Get the current color
+    /// Get the current preview color
     Color color() const;
-    /// Set the current color
+    /// Set the current preview color
     void setColor(const Color& color);
-protected:
-    void previewColor(const Color& color);
 
 protected:
     std::function<void(const Color &)> mCallback;
     Slider *mAlphaSlider;
     ColorWheel *mColorWheel;
     std::array<IntBox<int>*, 3> mRGB;
-    std::array<IntBox<int>*, 3> mHSL;
+    std::array<IntBox<int>*, 3> mHWB;
     Button *mPickButton;
     bool mRequireButtonClick;
+    Color mSavedColor;
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };

@@ -30,26 +30,46 @@ ColorPicker::ColorPicker(Widget *parent, const Color& c, bool requireButtonClick
 
     mColorWheel = new ColorWheel(popup);
 
-    // Set up RGB & HSL controls
-    auto txtGrid = new Widget(popup);
-    txtGrid->setLayout(new GridLayout(Orientation::Vertical, 2, Alignment::Fill, 3, 0));
+    mAlphaSlider->setCallback([this](const float f) {
+        Color newColor = color();
+        newColor.a() = f;
+        mColorWheel->setColor(newColor);
+        setColor(newColor);
+    });
+
+    mColorWheel->setCallback([this](const Color& c) {
+        Color newColor = c;
+        newColor.a() = mAlphaSlider->value();
+        setColor(newColor);
+    });
 
     auto rgb_cb = [this](int) {
         float r = static_cast<float>(mRGB[0]->value()) / 255.0f;
         float g = static_cast<float>(mRGB[1]->value()) / 255.0f;
         float b = static_cast<float>(mRGB[2]->value()) / 255.0f;
         float a = mAlphaSlider->value();
-        Color rgba{ r,g,b,a };
-        previewColor(rgba);
+        mColorWheel->setColor({ r,g,b,a });
+        setColor({ r,g,b,a });
     };
-    auto hsl_cb = [this](int) {
-        float h = static_cast<float>(mHSL[0]->value()) / 361.0f;
-        float s = static_cast<float>(mHSL[1]->value()) / 101.0f;
-        float l = static_cast<float>(mHSL[2]->value()) / 101.0f;
+    auto hwb_cb = [this](int) {
+        float h = static_cast<float>(mHWB[0]->value()) / 360.0f;
+        float w = static_cast<float>(mHWB[1]->value()) / 100.0f;
+        float b = static_cast<float>(mHWB[2]->value()) / 100.0f;
         float a = mAlphaSlider->value();
-        Color rgba = Color::fromHSLA(Vector4f{h, s, l, a});
-        previewColor(rgba);
+        if (w + b > 1) {
+            float wbsum = w + b;
+            w /= wbsum;
+            b /= wbsum;
+        }
+        mColorWheel->setColorHWB({ h-0.25f,w,b,a });
+        Color rgba = mColorWheel->color();
+        rgba.a() = a;
+        setColor(rgba);
     };
+
+    // Set up RGB & HWB controls
+    auto txtGrid = new Widget(popup);
+    txtGrid->setLayout(new GridLayout(Orientation::Vertical, 2, Alignment::Fill, 3, 0));
 
     for(int i=0;i<3;i++) {
         mRGB[i] = new IntBox<int>(txtGrid, 0);
@@ -59,38 +79,44 @@ ColorPicker::ColorPicker(Widget *parent, const Color& c, bool requireButtonClick
         mRGB[i]->setSpinnable(true);
         mRGB[i]->setCallback(rgb_cb);
 
-        mHSL[i] = new IntBox<int>(txtGrid, 0);
-        mHSL[i]->setFontSize(12);
-        mHSL[i]->setMinMaxValues(0, i == 0 ? 360 : 100);
-        mHSL[i]->setEditable(true);
-        mHSL[i]->setSpinnable(true);
-        mHSL[i]->setCallback(hsl_cb);
+        mHWB[i] = new IntBox<int>(txtGrid, 0);
+        mHWB[i]->setFontSize(12);
+        mHWB[i]->setMinMaxValues(0, i == 0 ? 360 : 100);
+        mHWB[i]->setEditable(true);
+        mHWB[i]->setSpinnable(true);
+        mHWB[i]->setCallback(hwb_cb);
     }
+    mRGB[0]->setTooltip("Red");
+    mRGB[0]->setUnits("R");
+    mRGB[1]->setTooltip("Green");
+    mRGB[1]->setUnits("G");
+    mRGB[2]->setTooltip("Blue");
+    mRGB[2]->setUnits("B");
+
+    mHWB[0]->setTooltip("Hue");
+    mHWB[0]->setUnits("H");
+    mHWB[1]->setTooltip("White");
+    mHWB[1]->setUnits("W");
+    mHWB[2]->setTooltip("Black");
+    mHWB[2]->setUnits("B");
 
     mPickButton = new Button(popup, "Pick");
-
-    mAlphaSlider->setCallback([this](const float f)
-    {
-        previewColor(color());
-    });
-
-    mColorWheel->setCallback([this](const Color& c) {
-        previewColor(c);
-    });
-
     mPickButton->setCallback([this]() {
-        Color value = color();
-        setPushed(false); 
-        setColor(value);
+        setPushed(false);
         if (mCallback)
             mCallback(color());
     });
 
-    PopupButton::setChangeCallback([this](bool) {
-        setColor(color());
-        // Apply changes if they don't need explicit saving
-        if (mCallback && !mRequireButtonClick)
-            mCallback(color());
+    PopupButton::setChangeCallback([this](bool pushed) {
+        if (pushed) {
+            // Update the displayed color with the saved color
+            mSavedColor = color();
+        } else if (mRequireButtonClick) {
+            // Revert to the saved color
+            setColor(mSavedColor);
+            if (mCallback)
+                mCallback(mSavedColor);
+        }
     });
 }
 
@@ -98,32 +124,26 @@ Color ColorPicker::color() const {
     return backgroundColor();
 }
 
-void ColorPicker::setColor(const Color& color) {
-    /* Ignore setColor() calls when the user is currently editing */
-    if (!mPushed || !mRequireButtonClick) {
-        mAlphaSlider->setValue(color.a());
-        previewColor(color);
-    }
-}
-
-void ColorPicker::previewColor(const Color& c) {
-    Color rgba(c);
-    rgba.a() = mAlphaSlider->value();
-
-    mRGB[0]->setValue(rgba.r() * 255);
-    mRGB[1]->setValue(rgba.g() * 255);
-    mRGB[2]->setValue(rgba.b() * 255);
-
-    Vector4f hsla = rgba.toHSLA();
-    mHSL[0]->setValue(hsla(0) * 360);
-    mHSL[1]->setValue(hsla(1) * 100);
-    mHSL[2]->setValue(hsla(2) * 100);
-
-    Color fg = rgba.contrastingColor();
-    setBackgroundColor(rgba);
+void ColorPicker::setColor(const Color& c) {
+    Color fg = c.contrastingColor();
+    setBackgroundColor(c);
     setTextColor(fg);
-    mColorWheel->setColor(rgba);
-    mPickButton->setBackgroundColor(rgba);
+
+    mAlphaSlider->setValue(c.a());
+
+    mRGB[0]->setValue(c.r() * 255);
+    mRGB[1]->setValue(c.g() * 255);
+    mRGB[2]->setValue(c.b() * 255);
+
+    Vector4f hwb = mColorWheel->colorHWB();
+    mHWB[0]->setValue((hwb(0)+0.25) * 360);
+    mHWB[1]->setValue(hwb(1) * 100);
+    mHWB[2]->setValue(hwb(2) * 100);
+
+    mPickButton->setBackgroundColor(c);
     mPickButton->setTextColor(fg);
+
+    if (mCallback)
+        mCallback(color());
 }
 NAMESPACE_END(nanogui)

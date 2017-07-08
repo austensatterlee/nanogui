@@ -49,7 +49,9 @@ void Popup::draw(NVGcontext* ctx) {
     if (disposable() && !focused()) {
         setVisible(false);
         if (mParentButton) {
-            mParentButton->mPushed = false;
+            mParentButton->setPushed(false);
+            if (mParentButton->changeCallback())
+                mParentButton->changeCallback()(false);
         } 
     }
 

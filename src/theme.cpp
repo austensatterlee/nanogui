@@ -64,12 +64,12 @@ Theme::Theme(NVGcontext *ctx) {
     mWindowPopup                      = Color(50, 255);
     mWindowPopupTransparent           = Color(50, 0);
 
-    mFontMono = nvgCreateFontMem(ctx, "mono", inconsolata_regular_ttf,
-                                 inconsolata_regular_ttf_size, 0);
     mFontNormal = nvgCreateFontMem(ctx, "sans", roboto_regular_ttf,
                                    roboto_regular_ttf_size, 0);
     mFontBold = nvgCreateFontMem(ctx, "sans-bold", roboto_bold_ttf,
                                  roboto_bold_ttf_size, 0);
+    mFontMono = nvgCreateFontMem(ctx, "mono", droidsans_mono_ttf,
+                                 droidsans_mono_ttf_size, 0);
     mFontIcons = nvgCreateFontMem(ctx, "icons", entypo_ttf,
                                   entypo_ttf_size, 0);
     if (mFontNormal == -1 || mFontBold == -1 || mFontIcons == -1 || mFontMono == -1)

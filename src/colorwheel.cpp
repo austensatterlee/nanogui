@@ -274,7 +274,6 @@ void ColorWheel::setColor(const Color &rgb) {
     float l = (max + min) / 2;
 
     if (max == min) {
-        mHue = 0.;
         mBlack = 1. - l;
         mWhite = l;
     } else {
@@ -320,5 +319,13 @@ bool ColorWheel::load(Serializer &s) {
     return true;
 }
 
+void ColorWheel::setColorHWB(const Vector4f& hwb) {
+    mHue = hwb(0);
+    mWhite = hwb(1);
+    mBlack = hwb(2);
+}
+Vector4f ColorWheel::colorHWB() const {
+    return { mHue, mWhite, mBlack, 1.0f };
+}
 NAMESPACE_END(nanogui)
 

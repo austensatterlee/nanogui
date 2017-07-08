@@ -34,6 +34,7 @@ TextBox::TextBox(Widget *parent,const std::string &value)
       mAlignment(Alignment::Center),
       mUnits(""),
       mFormat(""),
+      mPreferredFont("sans"),
       mUnitsImage(-1),
       mValidFormat(true),
       mValueTemp(value),
@@ -60,7 +61,10 @@ void TextBox::setTheme(Theme *theme) {
 }
 
 Vector2i TextBox::preferredSize(NVGcontext *ctx) const {
-    Vector2i size(0, fontSize() * 1.4f);
+    Vector2i size(0, 0);
+    float bounds[4];
+    float ts = nvgTextBounds(ctx, 0, 0, mValue.c_str(), nullptr, bounds);
+    size(1) = (bounds[3] - bounds[1])*1.8f;
 
     float uw = 0;
     if (mUnitsImage > 0) {
@@ -76,7 +80,6 @@ Vector2i TextBox::preferredSize(NVGcontext *ctx) const {
         sw = 14.f;
     }
 
-    float ts = nvgTextBounds(ctx, 0, 0, mValue.c_str(), nullptr, nullptr);
     size(0) = size(1) + ts + uw + sw;
     return size;
 }
@@ -114,7 +117,7 @@ void TextBox::draw(NVGcontext* ctx) {
     nvgStroke(ctx);
 
     nvgFontSize(ctx, fontSize());
-    nvgFontFace(ctx, "sans");
+    nvgFontFace(ctx, mPreferredFont.c_str());
     Vector2i drawPos(mPos.x(), mPos.y() + mSize.y() * 0.5f + 1);
 
     float xSpacing = mSize.y() * 0.3f;
@@ -176,7 +179,7 @@ void TextBox::draw(NVGcontext* ctx) {
         }
 
         nvgFontSize(ctx, fontSize());
-        nvgFontFace(ctx, "sans");
+        nvgFontFace(ctx, mPreferredFont.c_str());
     }
 
     switch (mAlignment) {
