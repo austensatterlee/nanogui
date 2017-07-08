@@ -113,6 +113,7 @@ ColorPicker::ColorPicker(Widget *parent, const Color& c, bool requireButtonClick
             mSavedColor = color();
         } else if (mRequireButtonClick) {
             // Revert to the saved color
+            mColorWheel->setColor(mSavedColor);
             setColor(mSavedColor);
             if (mCallback)
                 mCallback(mSavedColor);

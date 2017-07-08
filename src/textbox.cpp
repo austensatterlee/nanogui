@@ -63,7 +63,11 @@ void TextBox::setTheme(Theme *theme) {
 Vector2i TextBox::preferredSize(NVGcontext *ctx) const {
     Vector2i size(0, 0);
     float bounds[4];
+    nvgSave(ctx);
+    nvgFontFace(ctx, mPreferredFont.c_str());
+    nvgFontSize(ctx, mFontSize);
     float ts = nvgTextBounds(ctx, 0, 0, mValue.c_str(), nullptr, bounds);
+    nvgRestore(ctx);
     size(1) = (bounds[3] - bounds[1])*1.8f;
 
     float uw = 0;
