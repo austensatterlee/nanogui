@@ -345,6 +345,7 @@ void Screen::initialize(GLFWwindow *window, bool shutdownGLFWOnDestruct) {
     mMouseState = mModifiers = 0;
     mDragActive = false;
     mLastInteraction = glfwGetTime();
+    mLastMouseDown = glfwGetTime();
     mProcessEvents = true;
     __nanogui_screens[mGLFWWindow] = this;
 
@@ -557,8 +558,10 @@ bool Screen::cursorPosCallbackEvent(double x, double y) {
                 mMouseState, mModifiers);
         }
 
-        if (!ret)
+        if (!ret) {
+            updateMouseFocus(p);
             ret = mouseMotionEvent(p, p - mMousePos, mMouseState, mModifiers);
+        }
 
         mMousePos = p;
 
@@ -590,16 +593,13 @@ bool Screen::mouseButtonCallbackEvent(int button, int action, int modifiers) {
         // Detect double clicks
         if (button == GLFW_MOUSE_BUTTON_LEFT) {
             if (action == GLFW_PRESS) {
-                mLastMouseDownTime = glfwGetTime();
-            }
-            if (mLastMouseUpTime >= 0 && (glfwGetTime() - mLastMouseUpTime) > 0.2)
-                mLastMouseUpTime = -1;
-            if (action == GLFW_RELEASE && button == GLFW_MOUSE_BUTTON_LEFT) {
-                if (glfwGetTime() - mLastMouseUpTime < 0.2) {
+                if (mLastMouseDown >= 0 && (glfwGetTime() - mLastMouseDown) > 0.2)
+                    mLastMouseDown = -1;
+                if (glfwGetTime() - mLastMouseDown < 0.2) {
                     mModifiers |= GLFW_MOD_DOUBLE_CLICK;
-                    mLastMouseUpTime = -1;
+                    mLastMouseDown = -1;
                 } else {
-                    mLastMouseUpTime = glfwGetTime();
+                    mLastMouseDown = glfwGetTime();
                 }
             }
         }
@@ -739,9 +739,41 @@ void Screen::updateFocus(Widget *widget) {
         moveWindowToFront(window);
 }
 
+void Screen::updateMouseFocus(const Vector2i& p) {
+    std::vector<Widget*> newMouseFocusPath;
+
+    Widget* widget = findWidget(p);
+    while (widget) {
+        newMouseFocusPath.push_back(widget);
+        widget = widget->parent();
+    }
+
+    for (auto w : mMouseFocusPath) {
+        if (!w->mouseFocus())
+            continue;
+        // Don't send a de-focus event to widget's that are also in the new focus path.
+        if (std::find(newMouseFocusPath.begin(), newMouseFocusPath.end(), w) != newMouseFocusPath.end())
+            continue;
+        w->mouseEnterEvent(p - w->absolutePosition(), false);
+    }
+
+    for (auto it = newMouseFocusPath.rbegin(); it != newMouseFocusPath.rend(); ++it) {
+        Widget* w = *it;
+        // Don't send a focus event to widget's that were in the old focus path.
+        if (std::find(mMouseFocusPath.begin(), mMouseFocusPath.end(), w) != mMouseFocusPath.end())
+            continue;
+        w->mouseEnterEvent(p - w->absolutePosition(), true);
+    }
+
+    mMouseFocusPath.clear();
+    mMouseFocusPath = newMouseFocusPath;
+}
+
 void Screen::disposeWindow(Window *window) {
     if (std::find(mFocusPath.begin(), mFocusPath.end(), window) != mFocusPath.end())
         mFocusPath.clear();
+    if (std::find(mMouseFocusPath.begin(), mMouseFocusPath.end(), window) != mMouseFocusPath.end())
+        mMouseFocusPath.clear();
     if (mDragWidget == window)
         mDragWidget = nullptr;
     removeChild(window);

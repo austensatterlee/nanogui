@@ -113,11 +113,8 @@ bool Widget::mouseMotionEvent(const Vector2i &p, const Vector2i &rel, int button
         Widget *child = *it;
         if (!child->visible())
             continue;
-        bool contained = child->contains(p - mPos), prevContained = child->contains(p - mPos - rel);
-        if (contained != prevContained)
-            child->mouseEnterEvent(p, contained);
-        if ((contained || prevContained) &&
-            child->mouseMotionEvent(p - mPos, rel, button, modifiers))
+        bool contained = child->contains(p - mPos);
+        if (contained  && child->mouseMotionEvent(p - mPos, rel, button, modifiers))
             return true;
     }
     return false;
@@ -231,7 +228,7 @@ const Screen* Widget::screen() const {
     }
 }
 
-    void Widget::requestFocus() {
+void Widget::requestFocus() {
     Widget *widget = this;
     while (widget->parent())
         widget = widget->parent();

@@ -188,6 +188,7 @@ public:
 
     /* Internal helper functions */
     void updateFocus(Widget *widget);
+    void updateMouseFocus(const Vector2i& p);
     void disposeWindow(Window *window);
     void centerWindow(Window *window);
     void moveWindowToFront(Window *window);
@@ -204,12 +205,12 @@ protected:
     Cursor mCursor;
 #endif
     std::vector<Widget *> mFocusPath;
+    std::vector<Widget *> mMouseFocusPath;
     Vector2i mFBSize;
     float mPixelRatio;
     int mMouseState, mModifiers;
     Vector2i mMousePos;
-    double mLastMouseDownTime;
-    double mLastMouseUpTime;
+    double mLastMouseDown;
     bool mDragActive;
     Widget *mDragWidget = nullptr;
     double mLastInteraction;
