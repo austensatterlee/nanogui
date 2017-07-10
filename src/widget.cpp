@@ -236,9 +236,6 @@ void Widget::requestFocus() {
 }
 
 bool Widget::mouseFocus() const {
-    auto mousePos = screen()->mousePos() - (parent() ? parent()->absolutePosition() : Vector2i::Zero());
-    bool trueMouseFocus = contains(mousePos);
-    assert(trueMouseFocus == mMouseFocus);
     return mMouseFocus;
 }
 
