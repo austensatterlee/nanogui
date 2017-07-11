@@ -619,7 +619,8 @@ bool Screen::mouseButtonCallbackEvent(int button, int action, int modifiers) {
         }
 #endif
 
-        if (action == GLFW_PRESS && (button == GLFW_MOUSE_BUTTON_1 || button == GLFW_MOUSE_BUTTON_2)) {
+        bool isDblClick = mModifiers & GLFW_MOD_DOUBLE_CLICK;
+        if (!isDblClick && action == GLFW_PRESS && (button == GLFW_MOUSE_BUTTON_1 || button == GLFW_MOUSE_BUTTON_2)) {
             mDragWidget = findWidget(mMousePos, [](const Widget* w) { return w->draggable(); });
             if (mDragWidget == this)
                 mDragWidget = nullptr;
