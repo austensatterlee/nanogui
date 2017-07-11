@@ -170,6 +170,10 @@ void Widget::removeChild(const Widget *widget) {
     std::vector<Widget *>& focusPath = screen()->mFocusPath;    
     if (std::find(focusPath.begin(), focusPath.end(), widget) != focusPath.end())
         focusPath.clear();
+    // Clear mouse focus path if necessary
+    std::vector<Widget *>& mouseFocusPath = screen()->mMouseFocusPath;
+    if (std::find(mouseFocusPath.begin(), mouseFocusPath.end(), widget) != mouseFocusPath.end())
+        mouseFocusPath.clear();
     // Reset the drag widget if it is a descendent of the widget marked for deletion
     Widget *dragWidget = screen()->mDragWidget;
     while (dragWidget){
