@@ -36,7 +36,13 @@ public:
     Color color() const;
     /// Set the current preview color
     void setColor(const Color& color);
-
+protected:
+    /**
+     * Sets the color but does not update the color wheel.
+     * 
+     * Used internally to update the color without having the color wheel update itself.
+     */
+    void setColor_(const Color& color);
 protected:
     std::function<void(const Color &)> mCallback;
     Slider *mAlphaSlider;

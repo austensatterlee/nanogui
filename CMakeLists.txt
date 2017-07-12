@@ -253,7 +253,7 @@ elseif(CMAKE_SYSTEM MATCHES "Linux" OR CMAKE_SYSTEM_NAME MATCHES "BSD")
   endif()
 endif()
 
-include_directories(${NANOGUI_EIGEN_INCLUDE_DIR} ext/glfw/include ext/nanovg/src include ${CMAKE_CURRENT_BINARY_DIR})
+include_directories(${NANOGUI_EIGEN_INCLUDE_DIR} ext/json ext/glfw/include ext/nanovg/src include ${CMAKE_CURRENT_BINARY_DIR})
 
 
 # Run simple cmake converter to put font files into the data segment

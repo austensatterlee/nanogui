@@ -21,7 +21,6 @@
 NAMESPACE_BEGIN(nanogui)
 
 ColorPicker::ColorPicker(Widget *parent, const Color& c, bool requireButtonClick) : PopupButton(parent, ""), mRequireButtonClick(requireButtonClick) {
-    setBackgroundColor(c);
     Popup *popup = this->popup();
     popup->setLayout(new GridLayout(Orientation::Horizontal, 1, Alignment::Fill, 3, 3));
 
@@ -33,14 +32,13 @@ ColorPicker::ColorPicker(Widget *parent, const Color& c, bool requireButtonClick
     mAlphaSlider->setCallback([this](const float f) {
         Color newColor = color();
         newColor.a() = f;
-        mColorWheel->setColor(newColor);
         setColor(newColor);
     });
 
     mColorWheel->setCallback([this](const Color& c) {
         Color newColor = c;
         newColor.a() = mAlphaSlider->value();
-        setColor(newColor);
+        setColor_(newColor);
     });
 
     auto rgb_cb = [this](int) {
@@ -81,7 +79,7 @@ ColorPicker::ColorPicker(Widget *parent, const Color& c, bool requireButtonClick
 
         mHWB[i] = new IntBox<int>(txtGrid, 0);
         mHWB[i]->setFontSize(12);
-        mHWB[i]->setMinMaxValues(0, i == 0 ? 360 : 100);
+        mHWB[i]->setMinMaxValues(0, i == 0 ? 255 : 255);
         mHWB[i]->setEditable(true);
         mHWB[i]->setSpinnable(true);
         mHWB[i]->setCallback(hwb_cb);
@@ -113,12 +111,12 @@ ColorPicker::ColorPicker(Widget *parent, const Color& c, bool requireButtonClick
             mSavedColor = color();
         } else if (mRequireButtonClick) {
             // Revert to the saved color
-            mColorWheel->setColor(mSavedColor);
             setColor(mSavedColor);
             if (mCallback)
                 mCallback(mSavedColor);
         }
     });
+    setColor(c);
 }
 
 Color ColorPicker::color() const {
@@ -126,6 +124,11 @@ Color ColorPicker::color() const {
 }
 
 void ColorPicker::setColor(const Color& c) {
+    mColorWheel->setColor(c);
+    setColor_(c);
+}
+
+void ColorPicker::setColor_(const Color& c) {
     Color fg = c.contrastingColor();
     setBackgroundColor(c);
     setTextColor(fg);
@@ -137,9 +140,9 @@ void ColorPicker::setColor(const Color& c) {
     mRGB[2]->setValue(c.b() * 255);
 
     Vector4f hwb = mColorWheel->colorHWB();
-    mHWB[0]->setValue((hwb(0)+0.25) * 360);
-    mHWB[1]->setValue(hwb(1) * 100);
-    mHWB[2]->setValue(hwb(2) * 100);
+    mHWB[0]->setValue((hwb(0) + 0.25) * 255);
+    mHWB[1]->setValue(hwb(1) * 255);
+    mHWB[2]->setValue(hwb(2) * 255);
 
     mPickButton->setBackgroundColor(c);
     mPickButton->setTextColor(fg);

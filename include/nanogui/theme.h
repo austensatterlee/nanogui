@@ -16,6 +16,7 @@
 
 #include <nanogui/common.h>
 #include <nanogui/object.h>
+#include <json/json.hpp>
 
 NAMESPACE_BEGIN(nanogui)
 
@@ -25,8 +26,18 @@ NAMESPACE_BEGIN(nanogui)
  * \brief Storage class for basic theme-related properties.
  */
 class NANOGUI_EXPORT Theme : public Object {
+    using json = nlohmann::json;
 public:
     Theme(NVGcontext *ctx);
+
+    /// Retrieve a value using a json pointer. If it doesn't exist, return a default.
+    template<typename value_type>
+    value_type get(const std::string& json_ptr, value_type default_value) const;
+
+    /// Access the json object at a location specified by a json pointer.
+    json& prop(const std::string& json_ptr="") {
+        return mProperties[json::json_pointer{ json_ptr }];
+    };
 
     /* Fonts */
     int mFontMono;
@@ -82,10 +93,24 @@ public:
 
     Color mWindowPopup;
     Color mWindowPopupTransparent;
+
+protected:
+    json mProperties;
+
 protected:
     virtual ~Theme() { };
+
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
+
+template <typename value_type>
+value_type Theme::get(const std::string& json_ptr, value_type default_value) const {
+    try {
+        return mProperties.at(json::json_pointer{ json_ptr });
+    } catch (std::out_of_range) {
+        return default_value;
+    }
+}
 
 NAMESPACE_END(nanogui)

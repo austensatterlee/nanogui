@@ -46,11 +46,6 @@
 
 NAMESPACE_BEGIN(nanogui)
 
-/// Allows for conversion between nanogui::Color and the NanoVG NVGcolor class.
-inline Color::operator const NVGcolor &() const {
-    return reinterpret_cast<const NVGcolor &>(*this->data());
-}
-
 /// Determine whether an icon ID is a texture loaded via nvgImageIcon
 inline bool nvgIsImageIcon(int value) { return value < 1024; }
 

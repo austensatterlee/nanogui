@@ -17,6 +17,7 @@
 #include <array>
 #include <vector>
 #include <nanovg.h>
+#include <json/json.hpp>
 
 /* Set to 1 to draw boxes around widgets */
 //#define NANOGUI_SHOW_WIDGET_BOUNDS 1
@@ -180,6 +181,7 @@ typedef Eigen::Matrix<uint32_t, Eigen::Dynamic, Eigen::Dynamic> MatrixXu;
  */
 class Color : public Eigen::Vector4f {
     typedef Eigen::Vector4f Base;
+    typedef nlohmann::json json;
 public:
     /// Default constructor: represents black (``r, g, b, a = 0``)
     Color() : Color(0, 0, 0, 0) {}
@@ -309,10 +311,20 @@ public:
      */
     Color(int r, int g, int b, int a) : Color(Vector4i(r, g, b, a)) { }
 
-    /**
-     * Convert NVGcolor to Color.
-     */
-    Color(const NVGcolor& a_color) : Color(a_color.r, a_color.g, a_color.b, a_color.a) { };
+    
+    /// Convert NVGcolor to Color.
+    Color(const NVGcolor& color) : Color(color.r, color.g, color.b, color.a) { };
+
+    /// Convert from a json object
+    Color(const json& j) {
+        for (int i = 0; i < 4; i++) {
+            try {
+                (*this)[i] = j.at(i);
+            } catch (std::out_of_range) {
+                (*this)[i] = i == 3 ? 1.0f : 0.0f;
+            }
+        }
+    }
 
     /// Construct a color vector from MatrixBase (needed to play nice with Eigen)
     template <typename Derived> Color(const Eigen::MatrixBase<Derived>& p)
@@ -386,9 +398,16 @@ public:
         float luminance = cwiseProduct(Color(0.299f, 0.587f, 0.144f, 0.f)).sum();
         return Color(luminance < 0.5f ? 1.f : 0.f, 1.f);
     }
+    
+    /// Allows for conversion between nanogui::Color and the NanoVG NVGcolor class.
+    operator const NVGcolor &() const {
+        return reinterpret_cast<const NVGcolor &>(*this->data());
+    }
 
-    /// Allows for conversion between this Color and NanoVG's representation.
-    inline operator const NVGcolor &() const;
+    /// Allows conversion from a color object to a json object.
+    operator json() const {
+        return nlohmann::json{ r(), g(), b(), a() };
+    }
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
