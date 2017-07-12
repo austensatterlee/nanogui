@@ -50,9 +50,9 @@ ColorPicker::ColorPicker(Widget *parent, const Color& c, bool requireButtonClick
         setColor({ r,g,b,a });
     };
     auto hwb_cb = [this](int) {
-        float h = static_cast<float>(mHWB[0]->value()) / 360.0f;
-        float w = static_cast<float>(mHWB[1]->value()) / 100.0f;
-        float b = static_cast<float>(mHWB[2]->value()) / 100.0f;
+        float h = static_cast<float>(mHWB[0]->value()) / 255.0f;
+        float w = static_cast<float>(mHWB[1]->value()) / 255.0f;
+        float b = static_cast<float>(mHWB[2]->value()) / 255.0f;
         float a = mAlphaSlider->value();
         if (w + b > 1) {
             float wbsum = w + b;
@@ -62,7 +62,7 @@ ColorPicker::ColorPicker(Widget *parent, const Color& c, bool requireButtonClick
         mColorWheel->setColorHWB({ h-0.25f,w,b,a });
         Color rgba = mColorWheel->color();
         rgba.a() = a;
-        setColor(rgba);
+        setColor_(rgba);
     };
 
     // Set up RGB & HWB controls
