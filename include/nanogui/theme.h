@@ -32,7 +32,7 @@ public:
 
     /// Retrieve a value using a json pointer. If it doesn't exist, return a default.
     template<typename value_type>
-    value_type get(const std::string& json_ptr, value_type default_value) const;
+    value_type get(const std::string& json_ptr, const value_type& default_value) const;
 
     /// Access the json object at a location specified by a json pointer.
     json& prop(const std::string& json_ptr="") {
@@ -105,7 +105,7 @@ public:
 };
 
 template <typename value_type>
-value_type Theme::get(const std::string& json_ptr, value_type default_value) const {
+value_type Theme::get(const std::string& json_ptr, const value_type& default_value) const {
     try {
         return mProperties.at(json::json_pointer{ json_ptr });
     } catch (std::out_of_range) {
