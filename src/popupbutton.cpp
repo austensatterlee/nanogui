@@ -25,8 +25,7 @@ PopupButton::PopupButton(Widget *parent, const std::string &caption, int buttonI
     setFlags(Flags::ToggleButton | Flags::PopupButton);
 
     Window *parentWindow = window();
-    mPopup = new Popup(parentWindow->parent(), parentWindow, this);
-    //mPopup->setSize(Vector2i(320, 250));
+    mPopup = new Popup(screen(), parentWindow, this);
     mPopup->setVisible(false);
     mPopup->setDisposable(true);
 }
@@ -39,10 +38,6 @@ void PopupButton::draw(NVGcontext* ctx) {
     if (!mEnabled && mPushed)
         mPushed = false;
 
-    if (mPushed && !mPopup->visible())
-    {
-        screen()->updateFocus(mPopup);
-    }
     mPopup->setVisible(mPushed);
     
     Button::draw(ctx);

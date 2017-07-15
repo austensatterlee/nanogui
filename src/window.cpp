@@ -188,6 +188,14 @@ void Window::refreshRelativePlacement() {
     /* Overridden in \ref Popup */
 }
 
+void Window::fixPosition() {
+    mPos.x() = std::max(mPos.x(), mTheme->mWindowHeaderHeight - width());
+    mPos.x() = std::min(mPos.x(), parent()->width() - mTheme->mWindowHeaderHeight);
+    mPos.y() = std::min(mPos.y(), parent()->height() - mTheme->mWindowHeaderHeight);
+    mPos.y() = std::max(mPos.y(), 0);
+    mPos = mPos.cwiseMin(parent()->size() - Vector2i::Ones()*mTheme->mWindowHeaderHeight);
+}
+
 void Window::save(Serializer &s) const {
     Widget::save(s);
     s.set("title", mTitle);

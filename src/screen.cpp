@@ -611,8 +611,8 @@ bool Screen::mouseButtonCallbackEvent(int button, int action, int modifiers) {
                 false, mModifiers);
 
         // refresh drop widget in case it was deleted during the mouse button event
-        dropWidget = findWidget(mMousePos, [](const Widget* w) { return w->draggable(); });
 #if !defined(NANOGUI_CURSOR_DISABLED)
+        dropWidget = findWidget(mMousePos, [](const Widget* w) { return w->draggable(); });
         if (dropWidget != nullptr && dropWidget->cursor() != mCursor) {
             mCursor = dropWidget->cursor();
             glfwSetCursor(mGLFWWindow, mCursors[(int) mCursor]);
@@ -713,12 +713,10 @@ bool Screen::resizeCallbackEvent(int, int) {
 
 void Screen::updateFocus(Widget *widget) {
     // Construct new focus path
+    Window *window = widget ? widget->window() : nullptr;
     std::vector<Widget*> newFocusPath;
-    Window *window = nullptr;
-    while (widget) {
+    while (widget && widget->parent()) {
         newFocusPath.push_back(widget);
-        if (dynamic_cast<Window *>(widget))
-            window = (Window *) widget;
         widget = widget->parent();
     }
 

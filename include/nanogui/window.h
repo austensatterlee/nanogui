@@ -66,6 +66,8 @@ public:
 protected:
     /// Internal helper function to maintain nested window position values; overridden in \ref Popup
     virtual void refreshRelativePlacement();
+    /// Force window to remain at least partially on-screen. 
+    void fixPosition();
 protected:
     std::string mTitle;
     Widget *mButtonPanel;

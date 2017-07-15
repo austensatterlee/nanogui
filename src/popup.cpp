@@ -15,6 +15,7 @@
 #include <nanogui/opengl.h>
 #include <nanogui/serializer/core.h>
 #include "nanogui/popupbutton.h"
+#include "nanogui/screen.h"
 
 NAMESPACE_BEGIN(nanogui)
 
@@ -41,12 +42,19 @@ void Popup::performLayout(NVGcontext *ctx) {
 void Popup::refreshRelativePlacement() {
     mParentWindow->refreshRelativePlacement();
     mVisible &= mParentWindow->visibleRecursive();
-    mPos = mParentWindow->position() + mAnchorPos - Vector2i(0, mAnchorHeight);
+    mPos = mParentWindow->position() + mAnchorPos - Vector2i{0, height()*0.5};
+    Vector2i absPos = absolutePosition();
+    Vector2i mBottom = absPos + mSize;
+    if (mBottom.y() > screen()->height()) {
+        mPos.y() -= mBottom.y() - screen()->height();
+    }else if (absPos.y() < 0) {
+        mPos.y() -= mPos.y();
+    }
 }
 
 void Popup::draw(NVGcontext* ctx) {
 
-    if (disposable() && !focused()) {
+    if (disposable() && !focused() && !mParentWindow->focused()) {
         setVisible(false);
         if (mParentButton) {
             mParentButton->setPushed(false);
@@ -81,20 +89,17 @@ void Popup::draw(NVGcontext* ctx) {
     nvgBeginPath(ctx);
     nvgRoundedRect(ctx, mPos.x(), mPos.y(), mSize.x(), mSize.y(), cr);
 
-    Vector2i base = mPos + Vector2i(0, mAnchorHeight);
-    int sign = -1;
-    if (mSide == Side::Left) {
-        base.x() += mSize.x();
-        sign = 1;
-    }
+    Vector2i btnPos = mParentButton->absolutePosition();
+    Vector2i base = mPos + Vector2i{ 0,height()*0.5f };
+    int sign = (mSide == Left) ? 0 : 1;
 
-    nvgMoveTo(ctx, base.x() + 15*sign, base.y());
-    nvgLineTo(ctx, base.x() - 1*sign, base.y() - 15);
-    nvgLineTo(ctx, base.x() - 1*sign, base.y() + 15);
+    nvgMoveTo(ctx, btnPos.x() + sign*mParentButton->width(), btnPos.y()+mParentButton->height()*0.5);
+    nvgLineTo(ctx, mPos.x() + (1-sign)*width(), std::min(base.y() + 15.0f, static_cast<float>(mPos.y() + height())));
+    nvgLineTo(ctx, mPos.x() + (1-sign)*width(), std::max(base.y() - 15.0f, static_cast<float>(mPos.y())));
 
     nvgFillColor(ctx, mTheme->mWindowPopup);
     nvgFill(ctx);
-    nvgRestore(ctx);
+    nvgRestore(ctx);    
 
     Widget::draw(ctx);
 }
