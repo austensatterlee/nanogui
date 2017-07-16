@@ -23,7 +23,7 @@ Button::Button(Widget *parent, const std::string &caption, int icon)
       mTextColor(Color(0, 0)) { }
 
 Vector2i Button::preferredSize(NVGcontext *ctx) const {
-    int fontSize = mFontSize == -1 ? mTheme->mButtonFontSize : mFontSize;
+    int fontSize = mFontSize == -1 ? mTheme->prop("/button/text-size") : mFontSize;
     nvgFontSize(ctx, fontSize);
     nvgFontFace(ctx, "sans-bold");
     float tw = nvgTextBounds(ctx, 0,0, mCaption.c_str(), nullptr, nullptr);
@@ -106,21 +106,21 @@ bool Button::mouseButtonEvent(const Vector2i &p, int button, bool down, int modi
 void Button::draw(NVGcontext *ctx) {
     Widget::draw(ctx);
 
-    NVGcolor gradTop = mTheme->mButtonGradientTopUnfocused;
-    NVGcolor gradBot = mTheme->mButtonGradientBotUnfocused;
+    NVGcolor gradTop = mTheme->get<Color>("/button/unfocused/grad-top");
+    NVGcolor gradBot = mTheme->get<Color>("/button/unfocused/grad-bot");
 
     if (mPushed) {
-        gradTop = mTheme->mButtonGradientTopPushed;
-        gradBot = mTheme->mButtonGradientBotPushed;
+        gradTop = mTheme->get<Color>("/button/pushed/grad-top");
+        gradBot = mTheme->get<Color>("/button/pushed/grad-bot");
     } else if (mMouseFocus && mEnabled) {
-        gradTop = mTheme->mButtonGradientTopFocused;
-        gradBot = mTheme->mButtonGradientBotFocused;
+        gradTop = mTheme->get<Color>("/button/focused/grad-top");
+        gradBot = mTheme->get<Color>("/button/focused/grad-bot");
     }
 
     nvgBeginPath(ctx);
 
     nvgRoundedRect(ctx, mPos.x() + 1, mPos.y() + 1.0f, mSize.x() - 2,
-                   mSize.y() - 2, mTheme->mButtonCornerRadius - 1);
+                   mSize.y() - 2, mTheme->get<int>("/button/corner-radius") - 1);
 
     if (mBackgroundColor.w() != 0) {
         nvgFillColor(ctx, Color(mBackgroundColor.head<3>(), 1.f));
@@ -142,17 +142,17 @@ void Button::draw(NVGcontext *ctx) {
     nvgBeginPath(ctx);
     nvgStrokeWidth(ctx, 1.0f);
     nvgRoundedRect(ctx, mPos.x() + 0.5f, mPos.y() + (mPushed ? 0.5f : 1.5f), mSize.x() - 1,
-                   mSize.y() - 1 - (mPushed ? 0.0f : 1.0f), mTheme->mButtonCornerRadius);
-    nvgStrokeColor(ctx, mTheme->mBorderLight);
+                   mSize.y() - 1 - (mPushed ? 0.0f : 1.0f), mTheme->get<int>("/button/corner-radius"));
+    nvgStrokeColor(ctx, mTheme->get<Color>("/border/light"));
     nvgStroke(ctx);
 
     nvgBeginPath(ctx);
     nvgRoundedRect(ctx, mPos.x() + 0.5f, mPos.y() + 0.5f, mSize.x() - 1,
-                   mSize.y() - 2, mTheme->mButtonCornerRadius);
-    nvgStrokeColor(ctx, mTheme->mBorderDark);
+                   mSize.y() - 2, mTheme->get<int>("/button/corner-radius"));
+    nvgStrokeColor(ctx, mTheme->get<Color>("/border/dark"));
     nvgStroke(ctx);
 
-    int fontSize = mFontSize == -1 ? mTheme->mButtonFontSize : mFontSize;
+    int fontSize = mFontSize == -1 ? mTheme->get<int>("/button/text-size") : mFontSize;
     nvgFontSize(ctx, fontSize);
     nvgFontFace(ctx, "sans-bold");
     float tw = nvgTextBounds(ctx, 0,0, mCaption.c_str(), nullptr, nullptr);
@@ -160,9 +160,9 @@ void Button::draw(NVGcontext *ctx) {
     Vector2f center = mPos.cast<float>() + mSize.cast<float>() * 0.5f;
     Vector2f textPos(center.x() - tw * 0.5f, center.y() - 1);
     NVGcolor textColor =
-        mTextColor.w() == 0 ? mTheme->mTextColor : mTextColor;
+        mTextColor.w() == 0 ? mTheme->get<Color>("/text-color") : mTextColor;
     if (!mEnabled)
-        textColor = mTheme->mDisabledTextColor;
+        textColor = mTheme->get<Color>("/disabled-text-color");
 
     if (mIcon) {
         auto icon = utf8(mIcon);
@@ -212,7 +212,7 @@ void Button::draw(NVGcontext *ctx) {
     nvgFontSize(ctx, fontSize);
     nvgFontFace(ctx, "sans-bold");
     nvgTextAlign(ctx, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
-    nvgFillColor(ctx, mTheme->mTextColorShadow);
+    nvgFillColor(ctx, mTheme->get<Color>("/text-shadow"));
     nvgText(ctx, textPos.x(), textPos.y(), mCaption.c_str(), nullptr);
     nvgFillColor(ctx, textColor);
     nvgText(ctx, textPos.x(), textPos.y() + 1, mCaption.c_str(), nullptr);

@@ -21,8 +21,8 @@ Label::Label(Widget *parent, const std::string &caption, const std::string &font
 	{
 		if (mTheme)
 		{
-			mFontSize = mTheme->mStandardFontSize;
-			mColor = mTheme->mTextColor;
+			mFontSize = mTheme->get<int>("/text-size");
+			mColor = mTheme->get<Color>("/text-color");
 		}
 		if (fontSize >= 0)
 			mFontSize = fontSize;
@@ -31,8 +31,8 @@ Label::Label(Widget *parent, const std::string &caption, const std::string &font
 void Label::setTheme(Theme *theme) {
     Widget::setTheme(theme);
     if (mTheme) {
-        mFontSize = mTheme->mStandardFontSize;
-        mColor = mTheme->mTextColor;
+        mFontSize = mTheme->prop("/text-size");
+        mColor = mTheme->get<Color>("/text-color");
     }
 }
 

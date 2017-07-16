@@ -29,75 +29,35 @@ class NANOGUI_EXPORT Theme : public Object {
     using json = nlohmann::json;
 public:
     Theme(NVGcontext *ctx);
+    Theme(NVGcontext *ctx, const json& j);
 
     /// Retrieve a value using a json pointer. If it doesn't exist, return a default.
     template<typename value_type>
     value_type get(const std::string& json_ptr, const value_type& default_value) const;
 
+    template<typename value_type>
+    value_type get(const std::string& json_ptr) const;
+
     /// Access the json object at a location specified by a json pointer.
     json& prop(const std::string& json_ptr="") {
         return mProperties[json::json_pointer{ json_ptr }];
-    };
+    }
+    const json& prop(const std::string& json_ptr = "") const {
+        return mProperties[json::json_pointer{ json_ptr }];
+    }
 
-    /* Fonts */
-    int mFontMono;
-    int mFontNormal;
-    int mFontBold;
-    int mFontIcons;
-
-    /* Spacing-related parameters */
-    int mStandardFontSize;
-    int mButtonFontSize;
-    int mTextBoxFontSize;
-    int mWindowCornerRadius;
-    int mWindowHeaderHeight;
-    int mWindowDropShadowSize;
-    int mButtonCornerRadius;
-    float mTabBorderWidth;
-    int mTabInnerMargin;
-    int mTabMinButtonWidth;
-    int mTabMaxButtonWidth;
-    int mTabControlWidth;
-    int mTabButtonHorizontalPadding;
-    int mTabButtonVerticalPadding;
-
-    /* Generic colors */
-    Color mDropShadow;
-    Color mTransparent;
-    Color mBorderDark;
-    Color mBorderLight;
-    Color mBorderMedium;
-    Color mTextColor;
-    Color mDisabledTextColor;
-    Color mTextColorShadow;
-    Color mIconColor;
-
-    /* Button colors */
-    Color mButtonGradientTopFocused;
-    Color mButtonGradientBotFocused;
-    Color mButtonGradientTopUnfocused;
-    Color mButtonGradientBotUnfocused;
-    Color mButtonGradientTopPushed;
-    Color mButtonGradientBotPushed;
-
-    /* Window colors */
-    Color mWindowFillUnfocused;
-    Color mWindowFillFocused;
-    Color mWindowTitleUnfocused;
-    Color mWindowTitleFocused;
-
-    Color mWindowHeaderGradientTop;
-    Color mWindowHeaderGradientBot;
-    Color mWindowHeaderSepTop;
-    Color mWindowHeaderSepBot;
-
-    Color mWindowPopup;
-    Color mWindowPopupTransparent;
+    // Convert to a json object.
+    operator json() const {
+        json j = mProperties;
+        return j;
+    }
 
 protected:
     json mProperties;
+    NVGcontext *mCtx;
 
 protected:
+    void loadFonts();
     virtual ~Theme() { };
 
 public:
@@ -111,6 +71,11 @@ value_type Theme::get(const std::string& json_ptr, const value_type& default_val
     } catch (std::out_of_range) {
         return default_value;
     }
+}
+
+template <typename value_type>
+value_type Theme::get(const std::string& json_ptr) const {
+    return get(json_ptr, value_type{});
 }
 
 NAMESPACE_END(nanogui)

@@ -68,7 +68,7 @@ void Popup::draw(NVGcontext* ctx) {
     if (!mVisible)
         return;
 
-    int ds = mTheme->mWindowDropShadowSize, cr = mTheme->mWindowCornerRadius;
+    int ds = mTheme->prop("/window/shadow-size"), cr = mTheme->prop("/window/corner-radius");
 
     nvgSave(ctx);
     nvgResetScissor(ctx);
@@ -76,7 +76,7 @@ void Popup::draw(NVGcontext* ctx) {
     /* Draw a drop shadow */
     NVGpaint shadowPaint = nvgBoxGradient(
         ctx, mPos.x(), mPos.y(), mSize.x(), mSize.y(), cr*2, ds*2,
-        mTheme->mDropShadow, mTheme->mTransparent);
+        mTheme->get<Color>("/shadow"), mTheme->get<Color>("/transparent"));
 
     nvgBeginPath(ctx);
     nvgRect(ctx, mPos.x()-ds,mPos.y()-ds, mSize.x()+2*ds, mSize.y()+2*ds);
@@ -97,7 +97,7 @@ void Popup::draw(NVGcontext* ctx) {
     nvgLineTo(ctx, mPos.x() + (1-sign)*width(), std::min(base.y() + 15.0f, static_cast<float>(mPos.y() + height())));
     nvgLineTo(ctx, mPos.x() + (1-sign)*width(), std::max(base.y() - 15.0f, static_cast<float>(mPos.y())));
 
-    nvgFillColor(ctx, mTheme->mWindowPopup);
+    nvgFillColor(ctx, mTheme->get<Color>("/popup/fill"));
     nvgFill(ctx);
     nvgRestore(ctx);    
 

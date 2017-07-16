@@ -332,13 +332,13 @@ void ImageView::drawWidgetBorder(NVGcontext* ctx) const {
     nvgStrokeWidth(ctx, 1);
     nvgRoundedRect(ctx, mPos.x() + 0.5f, mPos.y() + 0.5f, mSize.x() - 1,
                    mSize.y() - 1, 0);
-    nvgStrokeColor(ctx, mTheme->mWindowPopup);
+    nvgStrokeColor(ctx, mTheme->get<Color>("/popup/fill"));
     nvgStroke(ctx);
 
     nvgBeginPath(ctx);
     nvgRoundedRect(ctx, mPos.x() + 0.5f, mPos.y() + 0.5f, mSize.x() - 1,
-                   mSize.y() - 1, mTheme->mButtonCornerRadius);
-    nvgStrokeColor(ctx, mTheme->mBorderDark);
+                   mSize.y() - 1, mTheme->prop("/button/corner-radius"));
+    nvgStrokeColor(ctx, mTheme->get<Color>("/border/dark"));
     nvgStroke(ctx);
 }
 

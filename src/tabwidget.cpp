@@ -119,7 +119,7 @@ const std::string &TabWidget::tabLabelAt(int index) const {
 
 void TabWidget::performLayout(NVGcontext* ctx) {
     int headerHeight = mHeader->preferredSize(ctx).y();
-    int margin = mTheme->mTabInnerMargin;
+    int margin = mTheme->prop("/tab/inner-margin");
     mHeader->setPosition({ 0, 0 });
     mHeader->setSize({ mSize.x(), headerHeight });
     mHeader->performLayout(ctx);
@@ -131,7 +131,7 @@ void TabWidget::performLayout(NVGcontext* ctx) {
 Vector2i TabWidget::preferredSize(NVGcontext* ctx) const {
     auto contentSize = mContent->preferredSize(ctx);
     auto headerSize = mHeader->preferredSize(ctx);
-    int margin = mTheme->mTabInnerMargin;
+    int margin = mTheme->prop("/tab/inner-margin");
     auto borderSize = Vector2i(2 * margin, 2 * margin);
     Vector2i tabPreferredSize = contentSize + borderSize + Vector2i(0, headerSize.y());
     return tabPreferredSize;
@@ -154,14 +154,14 @@ void TabWidget::draw(NVGcontext* ctx) {
         nvgBeginPath(ctx);
         nvgStrokeWidth(ctx, 1.0f);
         nvgRoundedRect(ctx, mPos.x() + 0.5f, mPos.y() + tabHeight + 1.5f, mSize.x() - 1,
-                       mSize.y() - tabHeight - 2, mTheme->mButtonCornerRadius);
-        nvgStrokeColor(ctx, mTheme->mBorderLight);
+                       mSize.y() - tabHeight - 2, mTheme->prop("/button/corner-radius"));
+        nvgStrokeColor(ctx, mTheme->get<Color>("/border/light"));
         nvgStroke(ctx);
 
         nvgBeginPath(ctx);
         nvgRoundedRect(ctx, mPos.x() + 0.5f, mPos.y() + tabHeight + 0.5f, mSize.x() - 1,
-                       mSize.y() - tabHeight - 2, mTheme->mButtonCornerRadius);
-        nvgStrokeColor(ctx, mTheme->mBorderDark);
+                       mSize.y() - tabHeight - 2, mTheme->prop("/button/corner-radius"));
+        nvgStrokeColor(ctx, mTheme->get<Color>("/border/dark"));
         nvgStroke(ctx);
         nvgRestore(ctx);
     }

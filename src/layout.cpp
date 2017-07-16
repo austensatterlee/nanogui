@@ -33,9 +33,9 @@ Vector2i BoxLayout::preferredSize(NVGcontext *ctx, const Widget *widget) const {
     const Window *window = dynamic_cast<const Window *>(widget);
     if (window && !window->title().empty()) {
         if (mOrientation == Orientation::Vertical)
-            size[1] += widget->theme()->mWindowHeaderHeight - mMargin/2;
+            size[1] += widget->theme()->prop("/window/header/height") - mMargin/2;
         else
-            yOffset = widget->theme()->mWindowHeaderHeight;
+            yOffset = widget->theme()->prop("/window/header/height");
     }
 
     bool first = true;
@@ -75,9 +75,9 @@ void BoxLayout::performLayout(NVGcontext *ctx, Widget *widget) const {
     const Window *window = dynamic_cast<const Window *>(widget);
     if (window && !window->title().empty()) {
         if (mOrientation == Orientation::Vertical) {
-            position += widget->theme()->mWindowHeaderHeight - mMargin/2;
+            position += widget->theme()->prop("/window/header/height") - mMargin/2;
         } else {
-            yOffset = widget->theme()->mWindowHeaderHeight;
+            yOffset = widget->theme()->prop("/window/header/height");
             containerSize[1] -= yOffset;
         }
     }
@@ -128,7 +128,7 @@ Vector2i GroupLayout::preferredSize(NVGcontext *ctx, const Widget *widget) const
 
     const Window *window = dynamic_cast<const Window *>(widget);
     if (window && !window->title().empty())
-        height += widget->theme()->mWindowHeaderHeight - mMargin/2;
+        height += widget->theme()->prop("/window/header/height") - mMargin/2;
 
     bool first = true, indent = false;
     for (auto c : widget->children()) {
@@ -162,7 +162,7 @@ void GroupLayout::performLayout(NVGcontext *ctx, Widget *widget) const {
 
     const Window *window = dynamic_cast<const Window *>(widget);
     if (window && !window->title().empty())
-        height += widget->theme()->mWindowHeaderHeight - mMargin/2;
+        height += widget->theme()->prop("/window/header/height") - mMargin/2;
 
     bool first = true, indent = false;
     for (auto c : widget->children()) {
@@ -209,7 +209,7 @@ Vector2i GridLayout::preferredSize(NVGcontext *ctx,
 
     const Window *window = dynamic_cast<const Window *>(widget);
     if (window && !window->title().empty())
-        size[1] += widget->theme()->mWindowHeaderHeight - mMargin/2;
+        size[1] += widget->theme()->prop("/window/header/height") - mMargin/2;
 
     return size;
 }
@@ -265,7 +265,7 @@ void GridLayout::performLayout(NVGcontext *ctx, Widget *widget) const {
     Vector2i extra = Vector2i::Zero();
     const Window *window = dynamic_cast<const Window *>(widget);
     if (window && !window->title().empty())
-        extra[1] += widget->theme()->mWindowHeaderHeight - mMargin / 2;
+        extra[1] += widget->theme()->prop("/window/header/height") - mMargin / 2;
 
     /* Strech to size provided by \c widget */
     for (int i = 0; i < 2; i++) {
@@ -359,7 +359,7 @@ Vector2i AdvancedGridLayout::preferredSize(NVGcontext *ctx, const Widget *widget
     Vector2i extra = Vector2i::Constant(2 * mMargin);
     const Window *window = dynamic_cast<const Window *>(widget);
     if (window && !window->title().empty())
-        extra[1] += widget->theme()->mWindowHeaderHeight - mMargin/2;
+        extra[1] += widget->theme()->prop("/window/header/height") - mMargin/2;
 
     return size+extra;
 }
@@ -371,7 +371,7 @@ void AdvancedGridLayout::performLayout(NVGcontext *ctx, Widget *widget) const {
     grid[0].insert(grid[0].begin(), mMargin);
     const Window *window = dynamic_cast<const Window *>(widget);
     if (window && !window->title().empty())
-        grid[1].insert(grid[1].begin(), widget->theme()->mWindowHeaderHeight + mMargin/2);
+        grid[1].insert(grid[1].begin(), widget->theme()->prop("/window/header/height") + mMargin/2);
     else
         grid[1].insert(grid[1].begin(), mMargin);
 
@@ -424,7 +424,7 @@ void AdvancedGridLayout::computeLayout(NVGcontext *ctx, const Widget *widget,
     Vector2i extra = Vector2i::Constant(2 * mMargin);
     const Window *window = dynamic_cast<const Window *>(widget);
     if (window && !window->title().empty())
-        extra[1] += widget->theme()->mWindowHeaderHeight - mMargin/2;
+        extra[1] += widget->theme()->prop("/window/header/height") - mMargin/2;
 
     containerSize -= extra;
 

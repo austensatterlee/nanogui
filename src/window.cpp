@@ -64,23 +64,23 @@ void Window::performLayout(NVGcontext *ctx) {
 }
 
 void Window::draw(NVGcontext *ctx) {
-    int ds = mTheme->mWindowDropShadowSize, cr = mTheme->mWindowCornerRadius;
-    int hh = mTheme->mWindowHeaderHeight;
+    int ds = mTheme->prop("/window/shadow-size"), cr = mTheme->prop("/window/corner-radius");
+    int hh = mTheme->prop("/window/header/height");
 
     /* Draw window */
     nvgSave(ctx);
     nvgBeginPath(ctx);
     nvgRoundedRect(ctx, mPos.x(), mPos.y(), mSize.x(), mSize.y(), cr);
 
-    nvgFillColor(ctx, mMouseFocus ? mTheme->mWindowFillFocused
-                                  : mTheme->mWindowFillUnfocused);
+    nvgFillColor(ctx, mMouseFocus ? mTheme->get<Color>("/window/focused/fill")
+                                  : mTheme->get<Color>("/window/unfocused/fill"));
     nvgFill(ctx);
 
 
     /* Draw a drop shadow */
     NVGpaint shadowPaint = nvgBoxGradient(
         ctx, mPos.x(), mPos.y(), mSize.x(), mSize.y(), cr*2, ds*2,
-        mTheme->mDropShadow, mTheme->mTransparent);
+        mTheme->get<Color>("/shadow"), mTheme->get<Color>("/transparent"));
 
     nvgSave(ctx);
     nvgResetScissor(ctx);
@@ -97,8 +97,8 @@ void Window::draw(NVGcontext *ctx) {
         NVGpaint headerPaint = nvgLinearGradient(
             ctx, mPos.x(), mPos.y(), mPos.x(),
             mPos.y() + hh,
-            mTheme->mWindowHeaderGradientTop,
-            mTheme->mWindowHeaderGradientBot);
+            mTheme->get<Color>("/window/header/grad-top"),
+            mTheme->get<Color>("/window/header/grad-bot"));
 
         nvgBeginPath(ctx);
         nvgRoundedRect(ctx, mPos.x(), mPos.y(), mSize.x(), hh, cr);
@@ -108,7 +108,7 @@ void Window::draw(NVGcontext *ctx) {
 
         nvgBeginPath(ctx);
         nvgRoundedRect(ctx, mPos.x(), mPos.y(), mSize.x(), hh, cr);
-        nvgStrokeColor(ctx, mTheme->mWindowHeaderSepTop);
+        nvgStrokeColor(ctx, mTheme->get<Color>("/window/header/sep-top"));
 
         nvgSave(ctx);
         nvgIntersectScissor(ctx, mPos.x(), mPos.y(), mSize.x(), 0.5f);
@@ -118,7 +118,7 @@ void Window::draw(NVGcontext *ctx) {
         nvgBeginPath(ctx);
         nvgMoveTo(ctx, mPos.x() + 0.5f, mPos.y() + hh - 1.5f);
         nvgLineTo(ctx, mPos.x() + mSize.x() - 0.5f, mPos.y() + hh - 1.5);
-        nvgStrokeColor(ctx, mTheme->mWindowHeaderSepBot);
+        nvgStrokeColor(ctx, mTheme->get<Color>("/window/header/sep-bot"));
         nvgStroke(ctx);
 
         nvgFontSize(ctx, 18.0f);
@@ -126,13 +126,13 @@ void Window::draw(NVGcontext *ctx) {
         nvgTextAlign(ctx, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
 
         nvgFontBlur(ctx, 2);
-        nvgFillColor(ctx, mTheme->mDropShadow);
+        nvgFillColor(ctx, mTheme->get<Color>("/shadow"));
         nvgText(ctx, mPos.x() + mSize.x() / 2,
                 mPos.y() + hh / 2, mTitle.c_str(), nullptr);
 
         nvgFontBlur(ctx, 0);
-        nvgFillColor(ctx, mFocused ? mTheme->mWindowTitleFocused
-                                   : mTheme->mWindowTitleUnfocused);
+        nvgFillColor(ctx, mFocused ? mTheme->get<Color>("/window/focused/title")
+                                   : mTheme->get<Color>("/window/unfocused/title"));
         nvgText(ctx, mPos.x() + mSize.x() / 2, mPos.y() + hh / 2 - 1,
                 mTitle.c_str(), nullptr);
     }
@@ -142,28 +142,22 @@ void Window::draw(NVGcontext *ctx) {
 }
 
 void Window::dispose() {
-    Widget *widget = this;
-    while (widget->parent())
-        widget = widget->parent();
-    ((Screen *) widget)->disposeWindow(this);
+    screen()->disposeWindow(this);
 }
 
 void Window::center() {
-    Widget *widget = this;
-    while (widget->parent())
-        widget = widget->parent();
-    ((Screen *) widget)->centerWindow(this);
+    screen()->centerWindow(this);
 }
 
 bool Window::mouseDragEvent(const Vector2i &, const Vector2i &rel,
                             int button, int /* modifiers */) {
     if (mDrag && (button & (1 << GLFW_MOUSE_BUTTON_1)) != 0) {
         mPos += rel;
-        mPos.x() = std::max(mPos.x(), mTheme->mWindowHeaderHeight - width());
-        mPos.x() = std::min(mPos.x(), parent()->width() - mTheme->mWindowHeaderHeight);
-        mPos.y() = std::min(mPos.y(), parent()->height() - mTheme->mWindowHeaderHeight);
+        mPos.x() = std::max(mPos.x(), mTheme->get<int>("/window/header/height") - width());
+        mPos.x() = std::min(mPos.x(), parent()->width() - mTheme->get<int>("/window/header/height"));
+        mPos.y() = std::min(mPos.y(), parent()->height() - mTheme->get<int>("/window/header/height"));
         mPos.y() = std::max(mPos.y(), 0);
-        mPos = mPos.cwiseMin(parent()->size() - Vector2i::Ones()*mTheme->mWindowHeaderHeight);
+        mPos = mPos.cwiseMin(parent()->size() - Vector2i::Ones()*mTheme->get<int>("/window/header/height"));
         return true;
     }
     return false;
@@ -173,7 +167,7 @@ bool Window::mouseButtonEvent(const Vector2i &p, int button, bool down, int modi
     if (Widget::mouseButtonEvent(p, button, down, modifiers))
         return true;
     if (button == GLFW_MOUSE_BUTTON_1) {
-        mDrag = down && (p.y() - mPos.y()) < mTheme->mWindowHeaderHeight;
+        mDrag = down && (p.y() - mPos.y()) < mTheme->get<int>("/window/header/height");
         return true;
     }
     return true;
@@ -189,11 +183,11 @@ void Window::refreshRelativePlacement() {
 }
 
 void Window::fixPosition() {
-    mPos.x() = std::max(mPos.x(), mTheme->mWindowHeaderHeight - width());
-    mPos.x() = std::min(mPos.x(), parent()->width() - mTheme->mWindowHeaderHeight);
-    mPos.y() = std::min(mPos.y(), parent()->height() - mTheme->mWindowHeaderHeight);
+    mPos.x() = std::max(mPos.x(), mTheme->get<int>("/window/header/height") - width());
+    mPos.x() = std::min(mPos.x(), parent()->width() - mTheme->get<int>("/window/header/height"));
+    mPos.y() = std::min(mPos.y(), parent()->height() - mTheme->get<int>("/window/header/height"));
     mPos.y() = std::max(mPos.y(), 0);
-    mPos = mPos.cwiseMin(parent()->size() - Vector2i::Ones()*mTheme->mWindowHeaderHeight);
+    mPos = mPos.cwiseMin(parent()->size() - Vector2i::Ones()*mTheme->get<int>("/window/header/height"));
 }
 
 void Window::save(Serializer &s) const {

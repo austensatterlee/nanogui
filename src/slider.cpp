@@ -97,7 +97,7 @@ void Slider::draw(NVGcontext* ctx) {
 
     NVGpaint knobShadow =
         nvgRadialGradient(ctx, knobPos.x(), knobPos.y(), kr - kshadow,
-                          kr + kshadow, Color(0, 64), mTheme->mTransparent);
+                          kr + kshadow, Color(0, 64), mTheme->get<Color>("/transparent"));
 
     nvgBeginPath(ctx);
     nvgRect(ctx, knobPos.x() - kr - 5, knobPos.y() - kr - 5, kr * 2 + 10,
@@ -109,15 +109,15 @@ void Slider::draw(NVGcontext* ctx) {
 
     NVGpaint knob = nvgLinearGradient(ctx,
         mPos.x(), center.y() - kr, mPos.x(), center.y() + kr,
-        mTheme->mBorderLight, mTheme->mBorderMedium);
+        mTheme->get<Color>("/border/light"), mTheme->get<Color>("/border/medium"));
     NVGpaint knobReverse = nvgLinearGradient(ctx,
         mPos.x(), center.y() - kr, mPos.x(), center.y() + kr,
-        mTheme->mBorderMedium,
-        mTheme->mBorderLight);
+        mTheme->get<Color>("/border/medium"),
+        mTheme->get<Color>("/border/light"));
 
     nvgBeginPath(ctx);
     nvgCircle(ctx, knobPos.x(), knobPos.y(), kr);
-    nvgStrokeColor(ctx, mTheme->mBorderDark);
+    nvgStrokeColor(ctx, mTheme->get<Color>("/border/dark"));
     nvgFillPaint(ctx, knob);
     nvgStroke(ctx);
     nvgFill(ctx);

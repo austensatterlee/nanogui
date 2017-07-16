@@ -46,7 +46,6 @@ TextBox::TextBox(Widget *parent,const std::string &value)
       mMouseDownModifier(0),
       mTextOffset(0),
       mLastClick(0) {
-    if (mTheme) mFontSize = mTheme->mTextBoxFontSize;
 }
 
 void TextBox::setEditable(bool editable) {
@@ -56,8 +55,6 @@ void TextBox::setEditable(bool editable) {
 
 void TextBox::setTheme(Theme *theme) {
     Widget::setTheme(theme);
-    if (mTheme)
-        mFontSize = mTheme->mTextBoxFontSize;
 }
 
 Vector2i TextBox::preferredSize(NVGcontext *ctx) const {
@@ -65,7 +62,7 @@ Vector2i TextBox::preferredSize(NVGcontext *ctx) const {
     float bounds[4];
     nvgSave(ctx);
     nvgFontFace(ctx, mPreferredFont.c_str());
-    nvgFontSize(ctx, mFontSize);
+    nvgFontSize(ctx, (mFontSize < 0) ? mTheme->prop("/textbox/text-size") : mFontSize);
     float ts = nvgTextBounds(ctx, 0, 0, mValue.c_str(), nullptr, bounds);
     nvgRestore(ctx);
     size(1) = (bounds[3] - bounds[1])*1.8f;
@@ -158,13 +155,13 @@ void TextBox::draw(NVGcontext* ctx) {
         spinArrowsWidth = 14.f;
 
         nvgFontFace(ctx, "icons");
-        nvgFontSize(ctx, ((mFontSize < 0) ? mTheme->mButtonFontSize : mFontSize) * 1.2f);
+        nvgFontSize(ctx, ((mFontSize < 0) ? mTheme->prop("/textbox/text-size") : mFontSize) * 1.2f);
 
         bool spinning = mMouseDownPos.x() != -1;
 
         /* up button */ {
             bool hover = mMouseFocus && spinArea(mMousePos) == SpinArea::Top;
-            nvgFillColor(ctx, (mEnabled && (hover || spinning)) ? mTheme->mTextColor : mTheme->mDisabledTextColor);
+            nvgFillColor(ctx, (mEnabled && (hover || spinning)) ? mTheme->get<Color>("/text-color") : mTheme->get<Color>("/disabled-text-color"));
             auto icon = utf8(ENTYPO_ICON_CHEVRON_UP);
             nvgTextAlign(ctx, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
             Vector2f iconPos(mPos.x() + 4.f,
@@ -174,7 +171,7 @@ void TextBox::draw(NVGcontext* ctx) {
 
         /* down button */ {
             bool hover = mMouseFocus && spinArea(mMousePos) == SpinArea::Bottom;
-            nvgFillColor(ctx, (mEnabled && (hover || spinning)) ? mTheme->mTextColor : mTheme->mDisabledTextColor);
+            nvgFillColor(ctx, (mEnabled && (hover || spinning)) ? mTheme->get<Color>("/text-color") : mTheme->get<Color>("/disabled-text-color"));
             auto icon = utf8(ENTYPO_ICON_CHEVRON_DOWN);
             nvgTextAlign(ctx, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
             Vector2f iconPos(mPos.x() + 4.f,
@@ -203,7 +200,7 @@ void TextBox::draw(NVGcontext* ctx) {
 
     nvgFontSize(ctx, fontSize());
     nvgFillColor(ctx,
-                 mEnabled ? mTheme->mTextColor : mTheme->mDisabledTextColor);
+                 mEnabled ? mTheme->get<Color>("/text-color") : mTheme->get<Color>("/disabled-text-color"));
 
     // clip visible text area
     float clipX = mPos.x() + xSpacing + spinArrowsWidth - 1.0f;

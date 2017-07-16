@@ -23,7 +23,7 @@ Widget::Widget(Widget *parent)
     : mParent(nullptr), mTheme(nullptr), mLayout(nullptr),
       mPos(Vector2i::Zero()), mSize(Vector2i::Zero()),
       mFixedSize(Vector2i::Zero()), mVisible(true), mEnabled(true), mDraggable(true),
-      mFocused(false), mMouseFocus(false), mTooltip(""), mFontSize(-1.0f),
+      mFocused(false), mMouseFocus(false), mTooltip(""), mFontSize(-1.0),
       mCursor(Cursor::Arrow) {
     if (parent)
         parent->addChild(this);
@@ -45,7 +45,7 @@ void Widget::setTheme(Theme *theme) {
 }
 
 int Widget::fontSize() const {
-    return (mFontSize < 0 && mTheme) ? mTheme->mStandardFontSize : mFontSize;
+    return (mFontSize < 0 && mTheme) ? mTheme->prop("/text-size") : mFontSize;
 }
 
 Vector2i Widget::preferredSize(NVGcontext *ctx) const {

@@ -61,7 +61,7 @@ void CheckBox::draw(NVGcontext *ctx) {
     nvgFontSize(ctx, fontSize());
     nvgFontFace(ctx, "sans");
     nvgFillColor(ctx,
-                 mEnabled ? mTheme->mTextColor : mTheme->mDisabledTextColor);
+                 mEnabled ? mTheme->get<Color>("/text-color") : mTheme->get<Color>("/disabled-text-color"));
     nvgTextAlign(ctx, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
     nvgText(ctx, mPos.x() + 1.6f * fontSize(), mPos.y() + mSize.y() * 0.5f,
             mCaption.c_str(), nullptr);
@@ -80,8 +80,8 @@ void CheckBox::draw(NVGcontext *ctx) {
     if (mChecked) {
         nvgFontSize(ctx, 1.8 * mSize.y());
         nvgFontFace(ctx, "icons");
-        nvgFillColor(ctx, mEnabled ? mTheme->mIconColor
-                                   : mTheme->mDisabledTextColor);
+        nvgFillColor(ctx, mEnabled ? mTheme->get<Color>("/icon-color")
+                                   : mTheme->get<Color>("/disabled-text-color"));
         nvgTextAlign(ctx, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
         nvgText(ctx, mPos.x() + mSize.y() * 0.5f + 1,
                 mPos.y() + mSize.y() * 0.5f, utf8(ENTYPO_ICON_CHECK).data(),

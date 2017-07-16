@@ -71,14 +71,12 @@ ColorPicker::ColorPicker(Widget *parent, const Color& c, bool requireButtonClick
 
     for(int i=0;i<3;i++) {
         mRGB[i] = new IntBox<int>(txtGrid, 0);
-        mRGB[i]->setFontSize(12);
         mRGB[i]->setMinMaxValues(0, 255);
         mRGB[i]->setEditable(true);
         mRGB[i]->setSpinnable(true);
         mRGB[i]->setCallback(rgb_cb);
 
         mHWB[i] = new IntBox<int>(txtGrid, 0);
-        mHWB[i]->setFontSize(12);
         mHWB[i]->setMinMaxValues(0, i == 0 ? 255 : 255);
         mHWB[i]->setEditable(true);
         mHWB[i]->setSpinnable(true);
