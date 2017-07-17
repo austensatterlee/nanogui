@@ -82,7 +82,7 @@ void Label::draw(NVGcontext *ctx) {
             nvgTextBox(ctx, xpos, mPos.y(), mFixedSize.x(), mCaption.c_str(), nullptr);
         }
         nvgFillColor(ctx, mColor);
-        nvgTextBox(ctx, xpos, mPos.y(), mFixedSize.x(), mCaption.c_str(), nullptr);
+        nvgTextBox(ctx, xpos, mPos.y() + 1, mFixedSize.x(), mCaption.c_str(), nullptr);
     } else {
         nvgTextAlign(ctx, (int)mAlign | NVG_ALIGN_MIDDLE);
         if (mShowShadow) {
@@ -90,7 +90,7 @@ void Label::draw(NVGcontext *ctx) {
             nvgText(ctx, xpos, mPos.y() + mSize.y() * 0.5f, mCaption.c_str(), nullptr);
         }
         nvgFillColor(ctx, mColor);
-        nvgText(ctx, xpos, mPos.y() + mSize.y() * 0.5f, mCaption.c_str(), nullptr);
+        nvgText(ctx, xpos, mPos.y() + 1 + mSize.y() * 0.5f, mCaption.c_str(), nullptr);
     }
 }
 
