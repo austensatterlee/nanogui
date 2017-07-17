@@ -17,7 +17,7 @@
 NAMESPACE_BEGIN(nanogui)
 
 Label::Label(Widget *parent, const std::string &caption, const std::string &font, int fontSize)
-		: Widget(parent), mCaption(caption), mFont(font), mAlign(Alignment::Left)
+        : Widget(parent), mCaption(caption), mFont(font), mShowShadow(false), mAlign(Alignment::Left)
 	{
 		if (mTheme)
 		{
@@ -59,7 +59,6 @@ void Label::draw(NVGcontext *ctx) {
     Widget::draw(ctx);
     nvgFontFace(ctx, mFont.c_str());
     nvgFontSize(ctx, fontSize());
-    nvgFillColor(ctx, mColor);
 	int xpos;
 	switch (mAlign)
 	{
@@ -78,9 +77,19 @@ void Label::draw(NVGcontext *ctx) {
 	}
     if (mFixedSize.x() > 0) {
         nvgTextAlign(ctx, (int)mAlign | NVG_ALIGN_TOP);
+        if(mShowShadow) {
+            nvgFillColor(ctx, mTheme->get<Color>("/text-shadow"));
+            nvgTextBox(ctx, xpos, mPos.y(), mFixedSize.x(), mCaption.c_str(), nullptr);
+        }
+        nvgFillColor(ctx, mColor);
         nvgTextBox(ctx, xpos, mPos.y(), mFixedSize.x(), mCaption.c_str(), nullptr);
     } else {
         nvgTextAlign(ctx, (int)mAlign | NVG_ALIGN_MIDDLE);
+        if (mShowShadow) {
+            nvgFillColor(ctx, mTheme->get<Color>("/text-shadow"));
+            nvgText(ctx, xpos, mPos.y() + mSize.y() * 0.5f, mCaption.c_str(), nullptr);
+        }
+        nvgFillColor(ctx, mColor);
         nvgText(ctx, xpos, mPos.y() + mSize.y() * 0.5f, mCaption.c_str(), nullptr);
     }
 }

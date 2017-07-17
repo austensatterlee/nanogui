@@ -52,6 +52,11 @@ public:
     /// Set the label color
     void setColor(const Color& color) { mColor = color; }
 
+    /// Get the label color
+    bool showShadow() const { return mShowShadow; }
+    /// Set the label color
+    void setShowShadow(bool showShadow) { mShowShadow = showShadow; }
+
 	/// Set the label's text alignment
 	void setTextAlign(Alignment align) { mAlign = align; }
 	/// Get the label's text alignment
@@ -73,6 +78,7 @@ protected:
     std::string mFont;
     Color mColor;
 
+    bool mShowShadow;
 	Alignment mAlign;
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW

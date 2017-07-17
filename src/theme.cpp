@@ -36,6 +36,7 @@ Theme::Theme(NVGcontext* ctx)
     prop("/shadow")              = Color(0, 128);
     prop("/transparent")         = Color(0, 0);
     prop("/icon-color")          = get<Color>("/text-color");
+
     prop("/border/dark")         = Color(29, 255);
     prop("/border/light")        = Color(92, 255);
     prop("/border/medium")       = Color(35, 255);
