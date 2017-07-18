@@ -720,19 +720,22 @@ void Screen::updateFocus(Widget *widget) {
         widget = widget->parent();
     }
 
-    for (auto w: mFocusPath) {
-        if (!w->focused())
-            continue;
-        // Don't send a de-focus event to widget's that are also in the new focus path.
-        if (std::find(newFocusPath.begin(), newFocusPath.end(), w)!=newFocusPath.end())
+    std::vector<Widget*> oldFocusPath = mFocusPath;
+    for (auto w : oldFocusPath) {
+        // Don't send a de-focus event to widgets that are also in the new focus path.
+        if (std::find(newFocusPath.begin(), newFocusPath.end(), w) != newFocusPath.end())
             continue;
         w->focusEvent(false);
     }
 
-    mFocusPath.clear();
-    mFocusPath = newFocusPath;
-    for (auto it = mFocusPath.rbegin(); it != mFocusPath.rend(); ++it)
+    for (auto it = newFocusPath.rbegin(); it != newFocusPath.rend(); ++it) {
+        // Don't send a focus event to widgets that are already focused.
+        if (std::find(mFocusPath.begin(), mFocusPath.end(), *it) != mFocusPath.end())
+            continue;
         (*it)->focusEvent(true);
+    }
+
+    mFocusPath = newFocusPath;
 
     if (window && !window->isBackgroundWindow())
         moveWindowToFront(window);
@@ -747,7 +750,8 @@ void Screen::updateMouseFocus(const Vector2i& p) {
         widget = widget->parent();
     }
 
-    for (auto w : mMouseFocusPath) {
+    std::vector<Widget*> oldMouseFocusPath = mMouseFocusPath;
+    for (auto w : oldMouseFocusPath) {
         if (!w->mouseFocus())
             continue;
         // Don't send a de-focus event to widget's that are also in the new focus path.
@@ -764,7 +768,6 @@ void Screen::updateMouseFocus(const Vector2i& p) {
         w->mouseEnterEvent(p - w->absolutePosition(), true);
     }
 
-    mMouseFocusPath.clear();
     mMouseFocusPath = newMouseFocusPath;
 }
 
