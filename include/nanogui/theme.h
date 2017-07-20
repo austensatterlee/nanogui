@@ -29,7 +29,6 @@ class NANOGUI_EXPORT Theme : public Object {
     using json = nlohmann::json;
 public:
     Theme(NVGcontext *ctx);
-    Theme(NVGcontext *ctx, const json& j);
 
     /// Retrieve a value using a json pointer. If it doesn't exist, return a default.
     template<typename value_type>
@@ -46,18 +45,20 @@ public:
         return mProperties[json::json_pointer{ json_ptr }];
     }
 
-    // Convert to a json object.
-    operator json() const {
-        json j = mProperties;
-        return j;
-    }
+    /// Convert to a json object.
+    operator json() const { return mProperties; }
+
+    /**
+     * Update with the items of `j`. If a key already exists, overwrite it with
+     * the value from `j`.
+     */
+    void update(const json& j);
 
 protected:
     json mProperties;
     NVGcontext *mCtx;
 
 protected:
-    void loadFonts();
     virtual ~Theme() { };
 
 public:

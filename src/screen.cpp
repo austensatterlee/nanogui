@@ -730,9 +730,10 @@ void Screen::updateFocus(Widget *widget) {
 
     for (auto it = newFocusPath.rbegin(); it != newFocusPath.rend(); ++it) {
         // Don't send a focus event to widgets that are already focused.
-        if (std::find(mFocusPath.begin(), mFocusPath.end(), *it) != mFocusPath.end())
+        Widget *w = *it;
+        if (std::find(oldFocusPath.begin(), oldFocusPath.end(), w) != oldFocusPath.end())
             continue;
-        (*it)->focusEvent(true);
+        w->focusEvent(true);
     }
 
     mFocusPath = newFocusPath;
@@ -752,8 +753,6 @@ void Screen::updateMouseFocus(const Vector2i& p) {
 
     std::vector<Widget*> oldMouseFocusPath = mMouseFocusPath;
     for (auto w : oldMouseFocusPath) {
-        if (!w->mouseFocus())
-            continue;
         // Don't send a de-focus event to widget's that are also in the new focus path.
         if (std::find(newMouseFocusPath.begin(), newMouseFocusPath.end(), w) != newMouseFocusPath.end())
             continue;
@@ -761,9 +760,9 @@ void Screen::updateMouseFocus(const Vector2i& p) {
     }
 
     for (auto it = newMouseFocusPath.rbegin(); it != newMouseFocusPath.rend(); ++it) {
-        Widget* w = *it;
         // Don't send a focus event to widget's that were in the old focus path.
-        if (std::find(mMouseFocusPath.begin(), mMouseFocusPath.end(), w) != mMouseFocusPath.end())
+        Widget *w = *it;
+        if (std::find(oldMouseFocusPath.begin(), oldMouseFocusPath.end(), w) != oldMouseFocusPath.end())
             continue;
         w->mouseEnterEvent(p - w->absolutePosition(), true);
     }

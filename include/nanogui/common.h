@@ -316,12 +316,10 @@ public:
     Color(const NVGcolor& color) : Color(color.r, color.g, color.b, color.a) { };
 
     /// Convert from a json object
-    Color(const json& j) {
-        for (int i = 0; i < 4; i++) {
-            try {
+    Color(const json& j) : Color(0.0f, 1.0f) {
+        if(j.is_array() && j.size()==4) {
+            for (int i = 0; i < 4; i++) {
                 (*this)[i] = j.at(i);
-            } catch (std::out_of_range) {
-                (*this)[i] = i == 3 ? 1.0f : 0.0f;
             }
         }
     }

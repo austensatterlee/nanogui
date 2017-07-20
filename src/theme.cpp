@@ -67,16 +67,6 @@ Theme::Theme(NVGcontext* ctx)
     prop("/popup/fill")        = Color(50, 255);
     prop("/popup/transparent") = Color(50, 0);
 
-    loadFonts();
-}
-
-Theme::Theme(NVGcontext* ctx, const json& j)
-    : mCtx(ctx) {
-    mProperties = j;
-    loadFonts();
-}
-
-void Theme::loadFonts() {
     prop("/font/normal") = nvgCreateFontMem(mCtx, "sans", roboto_regular_ttf, roboto_regular_ttf_size, 0);
     prop("/font/bold") = nvgCreateFontMem(mCtx, "sans-bold", roboto_bold_ttf, roboto_bold_ttf_size, 0);
     prop("/font/mono") = nvgCreateFontMem(mCtx, "mono", droidsans_mono_ttf, droidsans_mono_ttf_size, 0);
@@ -85,6 +75,13 @@ void Theme::loadFonts() {
     for (const auto& f : prop("/font")) {
         if (f.get<int>() == -1)
             throw std::runtime_error("Could not load fonts!");
+    }
+}
+
+void Theme::update(const json& j) {
+    json flat = j.flatten();
+    for (auto it = flat.begin(); it != flat.end(); ++it) {
+        prop(it.key()) = it.value();
     }
 }
 

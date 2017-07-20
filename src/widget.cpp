@@ -233,13 +233,15 @@ const Screen* Widget::screen() const {
 }
 
 void Widget::requestFocus() {
-    Widget *widget = this;
-    while (widget->parent())
-        widget = widget->parent();
-    ((Screen *) widget)->updateFocus(this);
+    screen()->updateFocus(this);
 }
 
-bool Widget::mouseFocus() const {
+void Widget::forfeitFocus() {
+    if (focused())
+        screen()->updateFocus(parent());
+}
+
+    bool Widget::mouseFocus() const {
     return mMouseFocus;
 }
 

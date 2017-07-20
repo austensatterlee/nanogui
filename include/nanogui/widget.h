@@ -186,10 +186,10 @@ public:
 
     /// Return whether or not this widget is currently focused
     bool focused() const { return mFocused; }
-    /// Set whether or not this widget is currently focused
-    void setFocused(bool focused) { mFocused = focused; }
     /// Request the focus to be moved to this widget
     void requestFocus();
+    /// Request focus be moved away from this widget
+    void forfeitFocus();
 
     /// Return wheter or not this widget has mouse focus
     bool mouseFocus() const;
