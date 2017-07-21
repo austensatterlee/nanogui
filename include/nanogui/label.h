@@ -27,11 +27,11 @@ NAMESPACE_BEGIN(nanogui)
 class NANOGUI_EXPORT Label : public Widget {
 public:
 
-	/// How to align the text in the label.
+    /// How to align the text in the label.
     enum class Alignment {
-        Left	= 1<<0,
-        Center	= 1<<1,
-        Right	= 1<<2
+        Left    = 1<<0,
+        Center    = 1<<1,
+        Right    = 1<<2
     };
 
     Label(Widget *parent, const std::string &caption,
@@ -57,10 +57,10 @@ public:
     /// Set the label color
     void setShowShadow(bool showShadow) { mShowShadow = showShadow; }
 
-	/// Set the label's text alignment
-	void setTextAlign(Alignment align) { mAlign = align; }
-	/// Get the label's text alignment
-	Alignment textAlign() const { return mAlign; }
+    /// Set the label's text alignment
+    void setTextAlign(Alignment align) { mAlign = align; }
+    /// Get the label's text alignment
+    Alignment textAlign() const { return mAlign; }
 
     /// Set the \ref Theme used to draw this widget
     virtual void setTheme(Theme *theme) override;
@@ -79,7 +79,7 @@ protected:
     Color mColor;
 
     bool mShowShadow;
-	Alignment mAlign;
+    Alignment mAlign;
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };

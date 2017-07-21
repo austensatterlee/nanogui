@@ -90,21 +90,21 @@ Widget* Widget::findWidget(const Vector2i& p, std::function<bool(const Widget*)>
 
 bool Widget::mouseButtonEvent(const Vector2i &p, int button, bool down, int modifiers) {
     std::vector<Widget*> children(mChildren);
-	for (Widget * w : children)
-		w->incRef();
+    for (Widget * w : children)
+        w->incRef();
     for (auto it = children.rbegin(); it != children.rend(); ++it) {
         Widget *child = *it;
-		if (child->visible() && child->contains(p - mPos) &&
-			child->mouseButtonEvent(p - mPos, button, down, modifiers)) {
-			for (Widget * w : children)
-				w->decRef();
-			return true;
-		}
+        if (child->visible() && child->contains(p - mPos) &&
+            child->mouseButtonEvent(p - mPos, button, down, modifiers)) {
+            for (Widget * w : children)
+                w->decRef();
+            return true;
+        }
     }
     if (button == GLFW_MOUSE_BUTTON_1 && down)
         requestFocus();
-	for (Widget * w : children)
-		w->decRef();
+    for (Widget * w : children)
+        w->decRef();
     return false;
 }
 
@@ -258,8 +258,8 @@ void Widget::draw(NVGcontext *ctx) {
         return;
 
     std::vector<Widget*> children(mChildren);
-	for (Widget * w : children)
-		w->incRef();
+    for (Widget * w : children)
+        w->incRef();
 
     nvgSave(ctx);
     nvgTranslate(ctx, mPos.x(), mPos.y());
@@ -274,7 +274,7 @@ void Widget::draw(NVGcontext *ctx) {
     nvgRestore(ctx);
     
     for (Widget * w : children)
-		w->decRef();
+        w->decRef();
 }
 
 void Widget::save(Serializer &s) const {
