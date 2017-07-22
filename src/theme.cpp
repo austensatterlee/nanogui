@@ -67,15 +67,13 @@ Theme::Theme(NVGcontext* ctx)
     prop("/popup/fill")        = Color(50, 255);
     prop("/popup/transparent") = Color(50, 0);
 
-    prop("/font/normal") = nvgCreateFontMem(mCtx, "sans", roboto_regular_ttf, roboto_regular_ttf_size, 0);
-    prop("/font/bold") = nvgCreateFontMem(mCtx, "sans-bold", roboto_bold_ttf, roboto_bold_ttf_size, 0);
-    prop("/font/mono") = nvgCreateFontMem(mCtx, "mono", droidsans_mono_ttf, droidsans_mono_ttf_size, 0);
-    prop("/font/icons") = nvgCreateFontMem(mCtx, "icons", entypo_ttf, entypo_ttf_size, 0);
-
-    for (const auto& f : prop("/font")) {
-        if (f.get<int>() == -1)
-            throw std::runtime_error("Could not load fonts!");
-    }
+    bool loadedFonts = true;
+    loadedFonts &= nvgCreateFontMem(mCtx, "sans", roboto_regular_ttf, roboto_regular_ttf_size, 0) >= 0;
+    loadedFonts &= nvgCreateFontMem(mCtx, "sans-bold", roboto_bold_ttf, roboto_bold_ttf_size, 0) >= 0;
+    loadedFonts &= nvgCreateFontMem(mCtx, "mono", droidsans_mono_ttf, droidsans_mono_ttf_size, 0) >= 0;
+    loadedFonts &= nvgCreateFontMem(mCtx, "icons", entypo_ttf, entypo_ttf_size, 0) >= 0;
+    if (!loadedFonts)
+        throw std::runtime_error("Could not load fonts!");    
 }
 
 void Theme::update(const json& j) {

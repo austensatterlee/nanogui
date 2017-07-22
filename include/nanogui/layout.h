@@ -304,7 +304,7 @@ public:
     /// Set the stretch factor of a given column
     void setColStretch(int index, float stretch) { mColStretch.at(index) = stretch; }
 
-    /// Set the size of a given row
+    /// Set the size of a given column
     void setColSize(int index, int size){ mCols[index] = size; }
 
     /// Specify the anchor data structure for a given widget
