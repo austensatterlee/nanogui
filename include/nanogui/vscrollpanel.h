@@ -27,6 +27,11 @@ class NANOGUI_EXPORT VScrollPanel : public Widget {
 public:
     VScrollPanel(Widget *parent);
 
+    /// Set the maximum height of the scroll panel
+    void setMaxHeight(int h) { mMaxHeight = h; }
+    /// Get the scroll panel's maximum height
+    int maxHeight() const { return mMaxHeight; }
+
     virtual void performLayout(NVGcontext *ctx) override;
     virtual Vector2i preferredSize(NVGcontext *ctx) const override;
     virtual bool mouseDragEvent(const Vector2i &p, const Vector2i &rel, int button, int modifiers) override;
@@ -35,6 +40,7 @@ public:
     virtual void save(Serializer &s) const override;
     virtual bool load(Serializer &s) override;
 protected:
+    int mMaxHeight;
     int mChildPreferredHeight;
     float mScroll;
     bool mUpdateLayout;
