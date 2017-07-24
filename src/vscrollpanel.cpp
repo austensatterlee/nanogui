@@ -36,7 +36,7 @@ void VScrollPanel::performLayout(NVGcontext *ctx) {
         child->setSize(Vector2i(mSize.x()-12, mChildPreferredHeight));
     } else {
         child->setPosition(Vector2i::Zero());
-        child->setSize(mSize);
+        child->setSize(Vector2i(mSize.x() - 12, mSize.y()));
         mScroll = 0;
     }
     child->performLayout(ctx);
