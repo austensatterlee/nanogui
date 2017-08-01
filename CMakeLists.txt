@@ -23,7 +23,6 @@ option(NANOGUI_BUILD_SHARED        "Build NanoGUI as a shared library?"  ON)
 option(NANOGUI_BUILD_PYTHON        "Build a Python plugin for NanoGUI?"  ON)
 option(NANOGUI_USE_GLAD            "Use Glad OpenGL loader library?"     ${NANOGUI_USE_GLAD_DEFAULT})
 option(NANOGUI_INSTALL             "Install NanoGUI on `make install`?"  ON)
-option(NANOGUI_DEFAULT_GL_VERSION  "Default to GL3 compatability?"       ON)
 
 set(NANOGUI_PYTHON_VERSION "" CACHE STRING "Python version to use for compiling the Python plugin")
 
@@ -75,13 +74,6 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/ext/glfw" "ext_build/glfw")
-
-# GL Version support: add NANOVG_GL3_IMPLEMENTATION unless disabled
-if (NANOGUI_DEFAULT_GL_VERSION)
-  list(APPEND NANOGUI_EXTRA_DEFS -DNANOVG_GL3_IMPLEMENTATION)
-else()
-  list(APPEND NANOGUI_EXTRA_DEFS -DNANOVG_GL2_IMPLEMENTATION)
-endif()
 
 # Python support: add NANOGUI_PYTHON flag to all targets
 if (NANOGUI_BUILD_PYTHON)

@@ -31,7 +31,6 @@
 #  include <GLFW/glfw3native.h>
 #endif
 
-/* Allow enforcing the GL2 implementation of NanoVG */
 #include <nanovg_gl.h>
 
 NAMESPACE_BEGIN(nanogui)
