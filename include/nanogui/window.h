@@ -53,6 +53,8 @@ public:
     virtual void draw(NVGcontext *ctx) override;
     /// Handle window drag events
     virtual bool mouseDragEvent(const Vector2i &p, const Vector2i &rel, int button, int modifiers) override;
+    /// Handle mouse motion events.
+    virtual bool mouseMotionEvent(const Vector2i& p, const Vector2i& rel, int button, int modifiers) override;
     /// Handle mouse events recursively and bring the current window to the top
     virtual bool mouseButtonEvent(const Vector2i &p, int button, bool down, int modifiers) override;
     /// Accept scroll events and propagate them to the widget under the mouse cursor

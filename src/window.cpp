@@ -163,6 +163,11 @@ bool Window::mouseDragEvent(const Vector2i &, const Vector2i &rel,
     return false;
 }
 
+bool Window::mouseMotionEvent(const Vector2i& p, const Vector2i& rel, int button, int modifiers) {
+    Widget::mouseMotionEvent(p, rel, button, modifiers);
+    return true;
+}
+
 bool Window::mouseButtonEvent(const Vector2i &p, int button, bool down, int modifiers) {
     if (Widget::mouseButtonEvent(p, button, down, modifiers))
         return true;
