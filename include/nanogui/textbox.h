@@ -67,9 +67,6 @@ public:
     const std::string &preferredFont() const { return mPreferredFont; }
     void setPreferredFont(const std::string &preferredFont) { mPreferredFont = preferredFont; }
 
-    /// Set the \ref Theme used to draw this widget
-    virtual void setTheme(Theme *theme) override;
-
     /// Set the change callback
     std::function<bool(const std::string& str)> callback() const { return mCallback; }
     void setCallback(const std::function<bool(const std::string& str)> &callback) { mCallback = callback; }

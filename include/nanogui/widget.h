@@ -107,9 +107,11 @@ public:
     void setFixedHeight(int height) { mFixedSize.y() = height; }
 
     /// Return whether or not the widget is currently visible (assuming all parents are visible)
-    bool visible() const { return mVisible; }
+    bool visible() const { return mVisible && (!mVisibilityCond || mVisibilityCond()); }
     /// Set whether or not the widget is currently visible (assuming all parents are visible)
     void setVisible(bool visible) { mVisible = visible; }
+    /// Provide a condition that will determine if the widget is visible
+    void setVisibleIf(std::function<bool(void)> condition) { mVisibilityCond = condition; }
 
     /// Check if this widget is currently visible, taking parent widgets into account
     bool visibleRecursive() const {
@@ -282,6 +284,7 @@ protected:
     std::vector<Widget *> mChildren;
     bool mVisible, mEnabled, mDraggable;
     bool mFocused, mMouseFocus;
+    std::function<bool(void)> mVisibilityCond;
     std::string mTooltip;
     int mFontSize;
     Cursor mCursor;

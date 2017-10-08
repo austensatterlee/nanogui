@@ -28,10 +28,16 @@ class NANOGUI_EXPORT Label : public Widget {
 public:
 
     /// How to align the text in the label.
-    enum class Alignment {
-        Left    = 1<<0,
-        Center    = 1<<1,
-        Right    = 1<<2
+    enum class HAlign {
+        Left = 1 << 0,
+        Center = 1 << 1,
+        Right = 1 << 2
+    };
+
+    enum class VAlign {
+        Top = 1 << 3,
+        Middle = 1 << 4,
+        Bottom = 1 << 5
     };
 
     Label(Widget *parent, const std::string &caption,
@@ -52,18 +58,19 @@ public:
     /// Set the label color
     void setColor(const Color& color) { mColor = color; }
 
-    /// Get the label color
+    /// Check if the shadow is being drawn
     bool showShadow() const { return mShowShadow; }
-    /// Set the label color
+    /// Specify if the shadow should be drawn
     void setShowShadow(bool showShadow) { mShowShadow = showShadow; }
 
-    /// Set the label's text alignment
-    void setTextAlign(Alignment align) { mAlign = align; }
-    /// Get the label's text alignment
-    Alignment textAlign() const { return mAlign; }
-
-    /// Set the \ref Theme used to draw this widget
-    virtual void setTheme(Theme *theme) override;
+    /// Set the label's horizontal text alignment
+    void setHorizAlign(HAlign align) { mHorizAlign = align; }
+    /// Get the label's horizontal text alignment
+    HAlign horizAlign() const { return mHorizAlign; }
+    /// Set the label's vertical text alignment
+    void setVertAlign(VAlign align) { mVertAlign = align; }
+    /// Get the label's vertical text alignment
+    VAlign vertAlign() const { return mVertAlign; }
 
     /// Compute the size needed to fully display the label
     virtual Vector2i preferredSize(NVGcontext *ctx) const override;
@@ -79,7 +86,8 @@ protected:
     Color mColor;
 
     bool mShowShadow;
-    Alignment mAlign;
+    HAlign mHorizAlign;
+    VAlign mVertAlign;
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };

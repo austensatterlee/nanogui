@@ -243,7 +243,7 @@ public:
             callback();
     }
 
-    /// Access the currently active \ref Window instance
+    /// Access the currently active \ref Widget instance.
     Widget *widget() { return mWidget; }
     void setWidget(Widget* widget) {
         mWidget = widget;
@@ -276,7 +276,7 @@ protected:
     std::vector<std::function<void()>> mRefreshCallbacks;
     std::string mGroupFontName = "sans-bold";
     std::string mLabelFontName = "sans";
-    Vector2i mFixedSize = Vector2i(0, 20);
+    Vector2i mFixedSize = Vector2i(0, 0);
     int mGroupFontSize = 20;
     int mLabelFontSize = 16;
     int mWidgetFontSize = 16;

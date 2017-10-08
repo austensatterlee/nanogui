@@ -53,10 +53,6 @@ void TextBox::setEditable(bool editable) {
     setCursor(editable ? Cursor::IBeam : Cursor::Arrow);
 }
 
-void TextBox::setTheme(Theme *theme) {
-    Widget::setTheme(theme);
-}
-
 Vector2i TextBox::preferredSize(NVGcontext *ctx) const {
     Vector2i size(0, 0);
     float bounds[4];
