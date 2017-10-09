@@ -37,7 +37,8 @@ public:
     enum class VAlign {
         Top = 1 << 3,
         Middle = 1 << 4,
-        Bottom = 1 << 5
+        Bottom = 1 << 5,
+        Baseline = 1 << 6
     };
 
     Label(Widget *parent, const std::string &caption,
