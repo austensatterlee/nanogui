@@ -212,7 +212,7 @@ void Button::draw(NVGcontext *ctx) {
     nvgFontSize(ctx, fontSize);
     nvgFontFace(ctx, "sans-bold");
     nvgTextAlign(ctx, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
-    nvgFillColor(ctx, mTheme->get<Color>("/text-shadow"));
+    nvgFillColor(ctx, mTheme->get<Color>("/shadow"));
     nvgText(ctx, textPos.x(), textPos.y(), mCaption.c_str(), nullptr);
     nvgFillColor(ctx, textColor);
     nvgText(ctx, textPos.x(), textPos.y() + 1, mCaption.c_str(), nullptr);

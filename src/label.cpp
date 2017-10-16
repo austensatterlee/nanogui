@@ -21,29 +21,32 @@ Label::Label(Widget *parent, const std::string &caption, const std::string &font
           mCaption(caption),
           mFont(font),
           mShowShadow(false),
-          mHorizAlign(HAlign::Left),
-          mVertAlign(VAlign::Top)
+          mHorizAlign(HAlign::Left)
     {
         if (mTheme)
-        {
-            mFontSize = mTheme->get<int>("/text-size");
             mColor = mTheme->get<Color>("/text-color");
-        }
         if (fontSize >= 0)
             mFontSize = fontSize;
     }
+
+void Label::setTheme(Theme *theme) {
+    Widget::setTheme(theme);
+    if (mTheme)
+        mColor = mTheme->get<Color>("/text-color");
+}
 
 Vector2i Label::preferredSize(NVGcontext *ctx) const {
     if (mCaption == "")
         return Vector2i::Zero();
     nvgFontFace(ctx, mFont.c_str());
     nvgFontSize(ctx, fontSize());
-    nvgTextAlign(ctx, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
     if (mFixedSize.x() > 0) {
+        nvgTextAlign(ctx, (int)mHorizAlign | NVG_ALIGN_TOP);
         float bounds[4];
         nvgTextBoxBounds(ctx, mPos.x(), mPos.y(), mFixedSize.x(), mCaption.c_str(), nullptr, bounds);
         return Vector2i(mFixedSize.x(), bounds[3] - bounds[1]);
     } else {
+        nvgTextAlign(ctx, (int)mHorizAlign | NVG_ALIGN_MIDDLE);
         return Vector2i(
             nvgTextBounds(ctx, 0, 0, mCaption.c_str(), nullptr, nullptr) + 2,
             fontSize()
@@ -55,39 +58,22 @@ void Label::draw(NVGcontext* ctx) {
     Widget::draw(ctx);
     nvgFontFace(ctx, mFont.c_str());
     nvgFontSize(ctx, fontSize());
-    nvgTextAlign(ctx, (int)mHorizAlign | (int)mVertAlign);
-    if (mFixedSize.x() == 0) {
+    if (mFixedSize.x() > 0) {
+        nvgTextAlign(ctx, (int)mHorizAlign | NVG_ALIGN_TOP);
         if (mShowShadow) {
-            nvgFillColor(ctx, mTheme->get<Color>("/text-shadow"));
-            nvgText(ctx, mPos.x(), mPos.y(), mCaption.c_str(), nullptr);
+            nvgFillColor(ctx, mTheme->get<Color>("/shadow"));
+            nvgTextBox(ctx, mPos.x(), mPos.y(), mFixedSize.x(), mCaption.c_str(), nullptr);
         }
         nvgFillColor(ctx, mColor);
-        nvgText(ctx, mPos.x(), mPos.y() + 1, mCaption.c_str(), nullptr);
+        nvgTextBox(ctx, mPos.x(), mPos.y() + 1, mFixedSize.x(), mCaption.c_str(), nullptr);
     } else {
-        int ypos = mPos.y();
-        switch (mVertAlign) {
-        case VAlign::Top:
-            ypos = mPos.y();
-            break;
-        case VAlign::Middle:
-            ypos = mPos.y() + mSize.y() * 0.5;
-            break;
-        case VAlign::Bottom:
-            ypos = mPos.y() + mSize.y();
-            break;
-        case VAlign::Baseline:
-            ypos = mPos.y();
-            break;
-        default:
-            ypos = mPos.y();
-            break;
-        }
+        nvgTextAlign(ctx, (int)mHorizAlign | NVG_ALIGN_MIDDLE);
         if (mShowShadow) {
-            nvgFillColor(ctx, mTheme->get<Color>("/text-shadow"));
-            nvgTextBox(ctx, mPos.x(), ypos, mSize.x(), mCaption.c_str(), nullptr);
+            nvgFillColor(ctx, mTheme->get<Color>("/shadow"));
+            nvgText(ctx, mPos.x(), mPos.y() + mSize.y() * 0.5f, mCaption.c_str(), nullptr);
         }
         nvgFillColor(ctx, mColor);
-        nvgTextBox(ctx, mPos.x(), ypos + 1, mSize.x(), mCaption.c_str(), nullptr);
+        nvgText(ctx, mPos.x(), mPos.y() + mSize.y() * 0.5f + 1, mCaption.c_str(), nullptr);
     }
 }
 

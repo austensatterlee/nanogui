@@ -31,7 +31,6 @@ Theme::Theme(NVGcontext* ctx)
 
     prop("/text-size")            = 16;
     prop("/text-color")          = Color(255, 160);
-    prop("/text-shadow")         = Color(0, 160);
     prop("/disabled-text-color") = Color(255, 80);
     prop("/shadow")              = Color(0, 128);
     prop("/transparent")         = Color(0, 0);

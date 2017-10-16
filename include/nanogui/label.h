@@ -34,13 +34,6 @@ public:
         Right = 1 << 2
     };
 
-    enum class VAlign {
-        Top = 1 << 3,
-        Middle = 1 << 4,
-        Bottom = 1 << 5,
-        Baseline = 1 << 6
-    };
-
     Label(Widget *parent, const std::string &caption,
           const std::string &font = "sans", int fontSize = -1);
 
@@ -68,10 +61,9 @@ public:
     void setHorizAlign(HAlign align) { mHorizAlign = align; }
     /// Get the label's horizontal text alignment
     HAlign horizAlign() const { return mHorizAlign; }
-    /// Set the label's vertical text alignment
-    void setVertAlign(VAlign align) { mVertAlign = align; }
-    /// Get the label's vertical text alignment
-    VAlign vertAlign() const { return mVertAlign; }
+
+    /// Set the \ref Theme used to draw this widget
+    virtual void setTheme(Theme * theme) override;
 
     /// Compute the size needed to fully display the label
     virtual Vector2i preferredSize(NVGcontext *ctx) const override;
@@ -88,7 +80,6 @@ protected:
 
     bool mShowShadow;
     HAlign mHorizAlign;
-    VAlign mVertAlign;
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
