@@ -45,7 +45,7 @@ void Widget::setTheme(Theme *theme) {
 }
 
 int Widget::fontSize() const {
-    return (mFontSize < 0 && mTheme) ? mTheme->prop("/text-size") : mFontSize;
+    return (mFontSize < 0 && mTheme) ? mTheme->get<int>("/text-size") : mFontSize;
 }
 
 Vector2i Widget::preferredSize(NVGcontext *ctx) const {
@@ -241,7 +241,7 @@ void Widget::forfeitFocus() {
         screen()->updateFocus(parent());
 }
 
-    bool Widget::mouseFocus() const {
+bool Widget::mouseFocus() const {
     return mMouseFocus;
 }
 
