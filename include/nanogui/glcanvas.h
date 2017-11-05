@@ -43,6 +43,10 @@ public:
     void setDrawBorder(const bool bDrawBorder) { mDrawBorder = bDrawBorder; }
     /// Return whether the widget border gets drawn or not
     const bool &drawBorder() const { return mDrawBorder; }
+    /// Set whether to draw the widget background or not
+    void setDrawBackground(const bool bDrawBackground) { mDrawBackground = bDrawBackground; }
+    /// Return whether the widget background gets drawn or not
+    const bool &drawBackground() const { return mDrawBackground; }
 
     /// Draw the canvas
     virtual void draw(NVGcontext *ctx) override;
@@ -62,6 +66,7 @@ protected:
 protected:
     Color mBackgroundColor;
     bool mDrawBorder;
+    bool mDrawBackground;
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };

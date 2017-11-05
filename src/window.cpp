@@ -72,7 +72,7 @@ void Window::draw(NVGcontext *ctx) {
     nvgBeginPath(ctx);
     nvgRoundedRect(ctx, mPos.x(), mPos.y(), mSize.x(), mSize.y(), cr);
 
-    nvgFillColor(ctx, mMouseFocus ? mTheme->get<Color>("/window/focused/fill")
+    nvgFillColor(ctx, mFocused ? mTheme->get<Color>("/window/focused/fill")
                                   : mTheme->get<Color>("/window/unfocused/fill"));
     nvgFill(ctx);
 

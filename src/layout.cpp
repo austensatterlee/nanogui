@@ -424,7 +424,7 @@ void AdvancedGridLayout::computeLayout(NVGcontext *ctx, const Widget *widget,
     Vector2i extra = Vector2i::Constant(2 * mMargin);
     const Window *window = dynamic_cast<const Window *>(widget);
     if (window && !window->title().empty())
-        extra[1] += widget->theme()->prop("/window/header/height") - mMargin/2;
+        extra[1] += widget->theme()->get<int>("/window/header/height") - mMargin/2;
 
     containerSize -= extra;
 
