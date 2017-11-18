@@ -30,6 +30,10 @@ class NANOGUI_EXPORT Theme : public Object {
 public:
     Theme(NVGcontext *ctx);
 
+    /// Retrieve a value using a json pointer. Create it first if it doesn't exist.
+    template<typename value_type>
+    value_type setDefault(const std::string& json_ptr, const value_type& default_value);
+
     /// Retrieve a value using a json pointer. If it doesn't exist, return a default.
     template<typename value_type>
     value_type get(const std::string& json_ptr, const value_type& default_value) const;
@@ -64,6 +68,16 @@ protected:
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
+
+template <typename value_type>
+value_type Theme::setDefault(const std::string& json_ptr, const value_type& default_value) {
+    try {
+        return mProperties.at(json::json_pointer{ json_ptr });
+    } catch (std::out_of_range) {
+        mProperties[json::json_pointer{ json_ptr }] = default_value;
+        return default_value;
+    }
+}
 
 template <typename value_type>
 value_type Theme::get(const std::string& json_ptr, const value_type& default_value) const {

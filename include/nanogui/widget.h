@@ -183,7 +183,7 @@ public:
 
     /// Return whether or not this widget needs to capture mouse drag events
     bool draggable() const { return mDraggable; }
-    /// Set wheter or not this widget needs to capture mouse drag events
+    /// Set whether or not this widget needs to capture mouse drag events
     void setDraggable(bool draggable) { mDraggable = draggable; }
 
     /// Return whether or not this widget is currently focused
