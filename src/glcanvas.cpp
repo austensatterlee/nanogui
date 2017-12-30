@@ -65,6 +65,8 @@ void GLCanvas::draw(NVGcontext *ctx) {
 
     glEnable(GL_SCISSOR_TEST);
     glScissor(imagePosition[0], imagePosition[1], size[0], size[1]);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     if (mDrawBackground) {
         glClearColor(mBackgroundColor[0], mBackgroundColor[1],
                      mBackgroundColor[2], mBackgroundColor[3]);
