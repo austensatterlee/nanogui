@@ -32,21 +32,21 @@ public:
 
     /// Retrieve a value using a json pointer. Create it first if it doesn't exist.
     template<typename value_type>
-    value_type setDefault(const std::string& json_ptr, const value_type& default_value);
+    value_type setDefault(const std::string& a_key, const value_type& a_default);
 
     /// Retrieve a value using a json pointer. If it doesn't exist, return a default.
     template<typename value_type>
-    value_type get(const std::string& json_ptr, const value_type& default_value) const;
+    value_type get(const std::string& a_key, const value_type& a_default) const;
 
     template<typename value_type>
-    value_type get(const std::string& json_ptr) const;
+    value_type get(const std::string& a_key) const;
 
     /// Access the json object at a location specified by a json pointer.
-    json& prop(const std::string& json_ptr="") {
-        return mProperties[json::json_pointer{ json_ptr }];
+    json& prop(const std::string& a_key="") {
+        return mProperties[a_key];
     }
-    const json& prop(const std::string& json_ptr = "") const {
-        return mProperties[json::json_pointer{ json_ptr }];
+    const json& prop(const std::string& a_key = "") const {
+        return mProperties[a_key];
     }
 
     /// Convert to a json object.
@@ -63,34 +63,34 @@ protected:
     NVGcontext *mCtx;
 
 protected:
-    virtual ~Theme() { };
+    virtual ~Theme() = default;
 
 public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 template <typename value_type>
-value_type Theme::setDefault(const std::string& json_ptr, const value_type& default_value) {
+value_type Theme::setDefault(const std::string& a_key, const value_type& a_default) {
     try {
-        return mProperties.at(json::json_pointer{ json_ptr });
-    } catch (std::out_of_range) {
-        mProperties[json::json_pointer{ json_ptr }] = default_value;
-        return default_value;
+        return mProperties.at(a_key);
+    } catch (std::out_of_range&) {
+        mProperties[a_key] = a_default;
+        return a_default;
     }
 }
 
 template <typename value_type>
-value_type Theme::get(const std::string& json_ptr, const value_type& default_value) const {
+value_type Theme::get(const std::string& a_key, const value_type& a_default) const {
     try {
-        return mProperties.at(json::json_pointer{ json_ptr });
-    } catch (std::out_of_range) {
-        return default_value;
+        return mProperties.at(a_key);
+    } catch (std::out_of_range&) {
+        return a_default;
     }
 }
 
 template <typename value_type>
-value_type Theme::get(const std::string& json_ptr) const {
-    return get(json_ptr, value_type{});
+value_type Theme::get(const std::string& a_key) const {
+    return get(a_key, value_type{});
 }
 
 NAMESPACE_END(nanogui)
