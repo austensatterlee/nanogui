@@ -76,8 +76,7 @@ Theme::Theme(NVGcontext* ctx)
 }
 
 void Theme::update(const json& j) {
-    json flat = j.flatten();
-    for (auto it = flat.begin(); it != flat.end(); ++it) {
+    for (auto it = j.begin(); it != j.end(); ++it) {
         prop(it.key()) = it.value();
     }
 }
